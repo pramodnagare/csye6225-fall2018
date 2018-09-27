@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,6 +60,7 @@ public class UserController {
 			if (u.getPassword().equals(uNamePwd[1])) {
 				Optional<Integer> optionalUser = userRepository.findIdByUserName(userJson.getEmail());
 				if (!optionalUser.isPresent()) {
+					userJson.setPassword(BCrypt.hashpw(userJson.getPassword(), BCrypt.gensalt(12))); // salting password
 					userRepository.save(userJson);
 					return new ResponseEntity(userJson, HttpStatus.OK);
 				}
@@ -74,19 +76,4 @@ public class UserController {
 			return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 	}
-
-	/*@PostMapping("/user/register")
-	public ResponseEntity createUser(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String Auth ,User user) {		
-		if (Auth == "Authorization") {
-			Optional<Integer> optionalUser = userRepository.findIdByUserName(user.getEmail());			
-			if (!optionalUser.isPresent()) {
-				userRepository.save(user);
-				return new ResponseEntity(user, HttpStatus.OK);
-			}
-			else {
-				return new ResponseEntity("User with the given email already exists!", HttpStatus.CONFLICT);
-			}	
-	}
-		return new ResponseEntity(user, HttpStatus.NOT_ACCEPTABLE);
-	}*/
 }
