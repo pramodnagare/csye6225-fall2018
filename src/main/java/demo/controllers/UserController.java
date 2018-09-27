@@ -74,19 +74,4 @@ public class UserController {
 			return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 		}
 	}
-
-	/*@PostMapping("/user/register")
-	public ResponseEntity createUser(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String Auth ,User user) {		
-		if (Auth == "Authorization") {
-			Optional<Integer> optionalUser = userRepository.findIdByUserName(user.getEmail());			
-			if (!optionalUser.isPresent()) {
-				userRepository.save(user);
-				return new ResponseEntity(user, HttpStatus.OK);
-			}
-			else {
-				return new ResponseEntity("User with the given email already exists!", HttpStatus.CONFLICT);
-			}	
-	}
-		return new ResponseEntity(user, HttpStatus.NOT_ACCEPTABLE);
-	}*/
 }
