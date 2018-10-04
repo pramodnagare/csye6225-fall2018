@@ -1,5 +1,7 @@
 package demo.models;
 
+import java.util.ArrayList;
+
 import javax.persistence.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,8 @@ public class User {
 	private int id;
 	private String email;
 	private String password;
-
 	
+
 	public int getId() {
 		return id;
 	}
