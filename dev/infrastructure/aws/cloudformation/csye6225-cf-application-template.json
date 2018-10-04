@@ -1,0 +1,307 @@
+{  
+   "Parameters":{  
+      "SecurityGroupNameWB":{  
+         "Description":"Web Server Security Group Name",
+         "Type":"String"
+      },
+      "SecurityGroupNameWBDesc":{  
+         "Description":"Web Server Security Group Name",
+         "Type":"String"
+      },
+      "CIDRBSGWB":{  
+         "Description":"CIDR block for Security group ingress rule",
+         "Type":"String"
+      },
+      "DescpIGWB1":{  
+         "Description":"Ingress Rule 1 description for WB SecurityGroup",
+         "Type":"String"
+      },
+      "FPWB1":{  
+         "Description":"From port# for Ingress rule 1 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "TPWB1":{  
+         "Description":"To port# for Ingress rule 1 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "IPprotocol":{  
+         "Description":"IP Protocol type for Ingresss rule",
+         "Type":"String"
+      },
+      "DescpIGWB2":{  
+         "Description":"Ingress Rule 2 description for WB SecurityGroup",
+         "Type":"String"
+      },
+      "FPWB2":{  
+         "Description":"From port# for Ingress rule 2 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "TPWB2":{  
+         "Description":"To port# for Ingress rule 2 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "DescpIGWB3":{  
+         "Description":"Ingress Rule 3 description for WB SecurityGroup",
+         "Type":"String"
+      },
+      "FPWB3":{  
+         "Description":"From port# for Ingress rule 3 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "TPWB3":{  
+         "Description":"To port# for Ingress rule 3 for WB SecurityGroup",
+         "Type":"String"
+      },
+      "TAGSGWB":{  
+         "Description":"TAG Name for WB Security Group",
+         "Type":"String"
+      },
+      "SecurityGroupNameDB":{  
+         "Description":"DB Server Security Group Name",
+         "Type":"String"
+      },
+      "SecurityGroupNameDBDesc":{  
+         "Description":"DB Security Group Name description",
+         "Type":"String"
+      },
+      "DescpIGDB1":{  
+         "Description":"Ingress Rule 1 description for DB SecurityGroup",
+         "Type":"String"
+      },
+      "FPDB1":{  
+         "Description":"From port# for Ingress rule 1 for DB SecurityGroup",
+         "Type":"String"
+      },
+      "TPDB1":{  
+         "Description":"To port# for Ingress rule 1 for DB SecurityGroup",
+         "Type":"String"
+      },
+      "TAGSGDB":{  
+         "Description":"TAG Name for DB Security Group",
+         "Type":"String"
+      },
+      "EC2TerminationProt":{  
+         "Description":"EC2 Termination protection",
+         "Type":"String"
+      },
+      "EC2AMI":{  
+         "Description":"Image ID for EC2 AMI",
+         "Type":"String"
+      },
+      "InstanceType":{  
+         "Description":"EC2 Instance type",
+         "Type":"String"
+      },
+      "EC2AZ":{  
+         "Description":"EC2 Avalibility Zone",
+         "Type":"String"
+      },
+      "EC2Device":{  
+         "Description":"EC2 Device",
+         "Type":"String"
+      },
+      "EC2TAGNAME":{  
+         "Description":"EC2 Tag Name",
+         "Type":"String"
+      },
+      "VolSize":{  
+         "Description":"Volume size",
+         "Type":"String"
+      },
+      "VolType":{  
+         "Description":"Volume type",
+         "Type":"String"
+      },
+      "VolAZ":{  
+         "Description":"Volume Avalibility Zone",
+         "Type":"String"
+      },
+      "VolName":{  
+         "Description":"Volume name",
+         "Type":"String"
+      }
+   },
+   "Resources":{  
+      "SecurityGroupWB":{  
+         "Type":"AWS::EC2::SecurityGroup",
+         "Properties":{  
+            "GroupName":{  
+               "Ref":"SecurityGroupNameWB"
+            },
+            "GroupDescription":{  
+               "Ref":"SecurityGroupNameWBDesc"
+            },
+            "SecurityGroupIngress":[  
+               {  
+                  "CidrIp":{  
+                     "Ref":"CIDRBSGWB"
+                  },
+                  "Description":{  
+                     "Ref":"DescpIGWB1"
+                  },
+                  "FromPort":{  
+                     "Ref":"FPWB1"
+                  },
+                  "ToPort":{  
+                     "Ref":"TPWB1"
+                  },
+                  "IpProtocol":{  
+                     "Ref":"IPprotocol"
+                  }
+               },
+               {  
+                  "CidrIp":{  
+                     "Ref":"CIDRBSGWB"
+                  },
+                  "Description":{  
+                     "Ref":"DescpIGWB2"
+                  },
+                  "FromPort":{  
+                     "Ref":"FPWB2"
+                  },
+                  "ToPort":{  
+                     "Ref":"TPWB2"
+                  },
+                  "IpProtocol":{  
+                     "Ref":"IPprotocol"
+                  }
+               },
+               {  
+                  "CidrIp":{  
+                     "Ref":"CIDRBSGWB"
+                  },
+                  "Description":{  
+                     "Ref":"DescpIGWB3"
+                  },
+                  "FromPort":{  
+                     "Ref":"FPWB3"
+                  },
+                  "ToPort":{  
+                     "Ref":"TPWB3"
+                  },
+                  "IpProtocol":{  
+                     "Ref":"IPprotocol"
+                  }
+               }
+            ],
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":{  
+                     "Ref":"TAGSGWB"
+                  }
+               }
+            ],
+            "VpcId":{  
+               "Fn::ImportValue":"cf-VPCID"
+            }
+         }
+      },
+      "SecurityGroupDB":{  
+         "Type":"AWS::EC2::SecurityGroup",
+         "Properties":{  
+            "GroupName":{  
+               "Ref":"SecurityGroupNameDB"
+            },
+            "GroupDescription":{  
+               "Ref":"SecurityGroupNameWBDesc"
+            },
+            "SecurityGroupIngress":[  
+               {  
+                  "SourceSecurityGroupId":{  
+                     "Ref":"SecurityGroupWB"
+                  },
+                  "Description":{  
+                     "Ref":"DescpIGDB1"
+                  },
+                  "FromPort":{  
+                     "Ref":"FPDB1"
+                  },
+                  "ToPort":{  
+                     "Ref":"TPDB1"
+                  },
+                  "IpProtocol":{  
+                     "Ref":"IPprotocol"
+                  }
+               }
+            ],
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":{  
+                     "Ref":"TAGSGDB"
+                  }
+               }
+            ],
+            "VpcId":{  
+               "Fn::ImportValue":"cf-VPCID"
+            }
+         }
+      },
+      "EC2Instance":{  
+         "Type":"AWS::EC2::Instance",
+         "Properties":{  
+            "DisableApiTermination":{  
+               "Ref":"EC2TerminationProt"
+            },
+            "ImageId":{  
+               "Ref":"EC2AMI"
+            },
+            "InstanceType":{  
+               "Ref":"InstanceType"
+            },
+            "AvailabilityZone":{  
+               "Ref":"EC2AZ"
+            },
+            "SubnetId":{  
+               "Fn::ImportValue":"cf-MainPublicSubnet"
+            },
+            "SecurityGroupIds":[  
+               {  
+                  "Ref":"SecurityGroupWB"
+               }
+            ],
+            "Volumes":[  
+               {  
+                  "Device":{  
+                     "Ref":"EC2Device"
+                  },
+                  "VolumeId":{  
+                     "Ref":"NewVolume"
+                  }
+               }
+            ],
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":{  
+                     "Ref":"EC2TAGNAME"
+                  }
+               }
+            ]
+         }
+      },
+      "NewVolume":{  
+         "Type":"AWS::EC2::Volume",
+         "Properties":{  
+            "Size":{  
+               "Ref":"VolSize"
+            },
+            "VolumeType":{  
+               "Ref":"VolType"
+            },
+            "AvailabilityZone":{  
+               "Ref":"VolAZ"
+            },
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":{  
+                     "Ref":"VolName"
+                  }
+               }
+            ]
+         }
+      }
+   }
+}
