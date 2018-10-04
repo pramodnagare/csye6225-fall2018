@@ -6,6 +6,7 @@ Pramod Nagare
 Pallavi Patel
 Harsh Shah
 Midhun Vugge
+
 Install the AWS Command Line Interface: Link: https://docs.aws.amazon.com/cli/latest/userguide/awscli-install-linux.html
 
 Configure your AWS CLI: aws configure
