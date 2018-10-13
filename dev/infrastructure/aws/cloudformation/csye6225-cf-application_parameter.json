@@ -148,5 +148,21 @@
       "ParameterKey":"VolName",
       "ParameterValue":"EC2AppVolume",
       "UsePreviousValue":true
-   }
+  
+    },
+    {  
+      "ParameterKey":"DBInstanceIdentifier",
+      "ParameterValue":"DBInstanceID",
+      "UsePreviousValue":true
+  
+    }
+
+
+    
+
+    
 ]
+
+    
+
+
