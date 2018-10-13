@@ -16,15 +16,15 @@
          "Description":"Public subnet 3 CIDR Block",
          "Type":"String"
       },
-      "PrivateSubnet1CIDR":{  
+      "DBPrivateSubnet1CIDR":{  
          "Description":"Private subnet 1 CIDR Block",
          "Type":"String"
       },
-      "PrivateSubnet2CIDR":{  
+      "DBPrivateSubnet2CIDR":{  
          "Description":"Private subnet 2 CIDR Block",
          "Type":"String"
       },
-      "PrivateSubnet3CIDR":{  
+      "DBPrivateSubnet3CIDR":{  
          "Description":"Private subnet 3 CIDR Block",
          "Type":"String"
       },
@@ -204,7 +204,7 @@
             ]
          }
       },
-      "PrivateSubnet1":{  
+      "DBPrivateSubnet1":{  
          "Type":"AWS::EC2::Subnet",
          "Properties":{  
             "VpcId":{  
@@ -219,7 +219,7 @@
                ]
             },
             "CidrBlock":{  
-               "Ref":"PrivateSubnet1CIDR"
+               "Ref":"DBPrivateSubnet1CIDR"
             },
             "MapPublicIpOnLaunch":false,
             "Tags":[  
@@ -232,7 +232,7 @@
             ]
          }
       },
-      "PrivateSubnet2":{  
+      "DBPrivateSubnet2":{  
          "Type":"AWS::EC2::Subnet",
          "Properties":{  
             "VpcId":{  
@@ -247,7 +247,7 @@
                ]
             },
             "CidrBlock":{  
-               "Ref":"PrivateSubnet2CIDR"
+               "Ref":"DBPrivateSubnet2CIDR"
             },
             "MapPublicIpOnLaunch":false,
             "Tags":[  
@@ -260,7 +260,7 @@
             ]
          }
       },
-      "PrivateSubnet3":{  
+      "DBPrivateSubnet3":{  
          "Type":"AWS::EC2::Subnet",
          "Properties":{  
             "VpcId":{  
@@ -275,7 +275,7 @@
                ]
             },
             "CidrBlock":{  
-               "Ref":"PrivateSubnet3CIDR"
+               "Ref":"DBPrivateSubnet3CIDR"
             },
             "MapPublicIpOnLaunch":false,
             "Tags":[  
@@ -373,7 +373,7 @@
                "Ref":"PrivateRouteTable1"
             },
             "SubnetId":{  
-               "Ref":"PrivateSubnet1"
+               "Ref":"DBPrivateSubnet1"
             }
          }
       },
@@ -400,7 +400,7 @@
                "Ref":"PrivateRouteTable2"
             },
             "SubnetId":{  
-               "Ref":"PrivateSubnet2"
+               "Ref":"DBPrivateSubnet2"
             }
          }
       },
@@ -427,8 +427,26 @@
                "Ref":"PrivateRouteTable3"
             },
             "SubnetId":{  
-               "Ref":"PrivateSubnet3"
+               "Ref":"DBPrivateSubnet3"
             }
+         }
+      },
+      "DBSubnetGroup":{  
+         "Type":"AWS::RDS::DBSubnetGroup",
+         "Properties":{  
+            "DBSubnetGroupDescription":"DB Subnet Group",
+            "DBSubnetGroupName":"DBsubnet",
+            "SubnetIds":[  
+               {  
+                  "Ref":"DBPrivateSubnet1"
+               },
+               {  
+                  "Ref":"DBPrivateSubnet2"
+               },
+               {  
+                  "Ref":"DBPrivateSubnet3"
+               }
+            ]
          }
       }
    },
@@ -452,6 +470,17 @@
          "Export":{  
             "Name":{  
                "Fn::Sub":"${AWS::StackName}-MainPublicSubnet"
+            }
+         }
+      },
+      "DBPrivateSubnets":{  
+         "Description":"The private subnet to form DBsubnetgroup",
+         "Value":{  
+            "Ref":"DBSubnetGroup"
+         },
+         "Export":{  
+            "Name":{  
+               "Fn::Sub":"${AWS::StackName}-DBPrivateSubnets"
             }
          }
       }
