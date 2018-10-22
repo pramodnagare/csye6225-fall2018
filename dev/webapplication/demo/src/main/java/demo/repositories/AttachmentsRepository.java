@@ -40,8 +40,7 @@ public interface AttachmentsRepository extends CrudRepository<Attachments, Strin
 
 	@Transactional
 	@Modifying
-	@Query("UPDATE Attachments u SET url= :url WHERE u.attachment_id= :attachment_id and u.userTransaction.id= :user_transaction_id")
-	void updateAttachments(@Param("attachment_id") String attachment_id,
-			@Param("user_transaction_id") String user_transaction_id);
+	@Query("UPDATE Attachments u SET url= :url WHERE u.attachment_id= :attachment_id")
+	void updateAttachments(@Param("attachment_id") String attachment_id);
 
 }

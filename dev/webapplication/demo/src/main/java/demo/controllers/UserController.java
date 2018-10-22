@@ -1,6 +1,6 @@
 package demo.controllers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +15,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.tomcat.jni.FileInfo;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.hibernate.annotations.Filter;
@@ -65,6 +67,9 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 @RestController
 
 public class UserController {
+	
+	private static final Logger log = Logger.getLogger(UserController.class);
+	
 	@Autowired
 	UserRepository userRepository;
 
@@ -76,10 +81,13 @@ public class UserController {
 
 	// -----------------------------------Fetching data for time
 	// ----------------------------------------------------//
+	
+	//log.Info("Test Message");
 
 	@GetMapping("/time")
 	public ResponseEntity<String> getTime(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth)
 			throws JSONException {
+		log.info("Entered getTime");
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		JSONObject bodyObject = new JSONObject("{}");
@@ -87,19 +95,25 @@ public class UserController {
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 		if (uNamePwd.length == 0) {
+			log.info("Authentication not provided");
 			return new ResponseEntity<String>(bodyObject.toString(), headers, HttpStatus.NOT_ACCEPTABLE);
 		}
 		Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 
 		if (optionalUserAuth.isPresent()) {
+			log.info("Authentication provided");
 
 			try {
 				bodyObject.put("currentTime", dtf.format(now));
+				log.info("Fetching time");
 			} catch (JSONException e1) {
+				log.error(e1);
 				e1.printStackTrace();
 			}
+			log.info("Get time working");
 			return new ResponseEntity<String>(bodyObject.toString(), headers, HttpStatus.ACCEPTED);
 		}
+		log.info("Authentication failed");
 		return new ResponseEntity<String>(bodyObject.toString(), headers, HttpStatus.NOT_ACCEPTABLE);
 
 	}
@@ -110,64 +124,113 @@ public class UserController {
 	// -------------------------------------create user and
 	// register--------------------------------------------------//
 
-	@PostMapping("/user/register")
-	public ResponseEntity createUser(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth,
-			@RequestBody User userJson) throws ArrayIndexOutOfBoundsException, InvocationTargetException {
-
-		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
-		String uNamePwd[] = new String(bytes).split(":");
-
-		try {
-
-			String username1 = uNamePwd[0];
-			System.out.println("username1" + username1);
-			String pass1 = uNamePwd[1];
-			System.out.println("pass1" + pass1);
-			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
-				return new ResponseEntity("Bhai name and pass daal ", HttpStatus.UNAUTHORIZED);
-			} else {
-				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
-				System.out.println("opt auth " + optionalUserAuth.get().toString());
-				if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
-						|| !optionalUserAuth.equals(Optional.empty())) {
-
-					User u = userRepository.findById(optionalUserAuth.get()).get();
-
-					String abc = uNamePwd[0].toString();
-					String def = uNamePwd[1].toString();
-
-					String encode = BCrypt.hashpw(def, BCrypt.gensalt(12));
-					System.out.println("encode is" + encode);
-
-					if (u.getEmail().equals(abc) && BCrypt.checkpw(def, u.getPassword()) == true) {
-						Optional<Integer> optionalUser = userRepository.findIdByUserName(userJson.getEmail());
-						if (!optionalUser.isPresent()) {
-							userJson.setPassword(BCrypt.hashpw(userJson.getPassword(), BCrypt.gensalt(12))); // salting
-																												// password
-							userRepository.save(userJson);
-							return new ResponseEntity(userJson, HttpStatus.OK);
-						} else {
-							return new ResponseEntity("User with the given email already exists!", HttpStatus.CONFLICT);
-						}
-					} else {
-						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
-					}
-				} else {
-					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
-				}
-				// }
-
-			}
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
-
-	}
+	// @PostMapping("/user/register")
+	// public ResponseEntity createUser(@RequestHeader(value = "Authorization",
+	// defaultValue = "No Auth") String auth,
+	// @RequestBody User userJson) throws ArrayIndexOutOfBoundsException,
+	// InvocationTargetException {
+	//
+	// byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
+	// String uNamePwd[] = new String(bytes).split(":");
+	//
+	// try {
+	//
+	// String username1 = uNamePwd[0];
+	// System.out.println("username1" + username1);
+	// String pass1 = uNamePwd[1];
+	// System.out.println("pass1" + pass1);
+	// if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 &&
+	// pass1.length() == 0) {
+	// return new ResponseEntity("Bhai name and pass daal ",
+	// HttpStatus.UNAUTHORIZED);
+	// } else {
+	// Optional<Integer> optionalUserAuth =
+	// userRepository.findIdByUserName(uNamePwd[0]);
+	// System.out.println("opt auth " + optionalUserAuth.get().toString());
+	// if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
+	// || !optionalUserAuth.equals(Optional.empty())) {
+	//
+	// User u = userRepository.findById(optionalUserAuth.get()).get();
+	//
+	// String abc = uNamePwd[0].toString();
+	// String def = uNamePwd[1].toString();
+	//
+	// String encode = BCrypt.hashpw(def, BCrypt.gensalt(12));
+	// System.out.println("encode is" + encode);
+	//
+	// if (u.getEmail().equals(abc) && BCrypt.checkpw(def, u.getPassword()) == true)
+	// {
+	// Optional<Integer> optionalUser =
+	// userRepository.findIdByUserName(userJson.getEmail());
+	// if (!optionalUser.isPresent()) {
+	// userJson.setPassword(BCrypt.hashpw(userJson.getPassword(),
+	// BCrypt.gensalt(12))); // salting
+	// // password
+	// userRepository.save(userJson);
+	// return new ResponseEntity(userJson, HttpStatus.OK);
+	// } else {
+	// return new ResponseEntity("User with the given email already exists!",
+	// HttpStatus.CONFLICT);
+	// }
+	// } else {
+	// return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
+	// }
+	// } else {
+	// return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
+	// }
+	// // }
+	//
+	// }
+	//
+	// } catch (Exception ex) {
+	// ex.printStackTrace();
+	// }
+	// return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
+	//
+	// }
 
 	// ------------------------------------------- create and user ends here //
 	// --------------------------------------//
+
+	// trying new if doesnot work remove it
+	@PostMapping("/user/register")
+	public ResponseEntity createUser1(@RequestBody User userJson)
+			throws ArrayIndexOutOfBoundsException, InvocationTargetException {
+
+		log.info("Entered Post user");
+		try {
+			String email = userJson.getEmail();
+			String pass = userJson.getPassword();
+
+			if (email.isEmpty() && pass.isEmpty()) {
+				log.info("Authentication not provided");				
+				return new ResponseEntity("Email or Password is blank please check once.", HttpStatus.FORBIDDEN);
+			} else {
+				log.info("Authentication provided");
+				Optional<Integer> optionalUser = userRepository.findIdByUserName(userJson.getEmail());
+				if (!optionalUser.isPresent()) {
+					log.info("New user");
+					userJson.setPassword(BCrypt.hashpw(userJson.getPassword(), BCrypt.gensalt(12))); // salting
+																										// password
+					userRepository.save(userJson);
+					log.info("Adding new user");
+					return new ResponseEntity(userJson, HttpStatus.OK);
+				} else {
+					log.info("User already exist");
+					return new ResponseEntity("User with the given email already exist!", HttpStatus.CONFLICT);
+				}
+			}
+
+		} catch (Exception ex) {
+			log.error(ex);
+			ex.printStackTrace();
+		}
+		log.info("Authentication failed");
+		return new ResponseEntity("You are not authorized please check your json fields", HttpStatus.UNAUTHORIZED);
+
+	}
+
+	// -------------------
 
 	// --------------------------------------create transaction //
 	// --------------------------------------------------//
@@ -177,6 +240,7 @@ public class UserController {
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth)
 			throws ArrayIndexOutOfBoundsException, InvocationTargetException {
 
+		log.info("Post User transaction");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 
@@ -184,14 +248,17 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Not Authorized ", HttpStatus.UNAUTHORIZED);
 			} else {
+				log.info("Authentication provided");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]); // user_id is there
 				// System.out.println(" oauth is : " + optionalUserAuth);
 
 				if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
 						|| !optionalUserAuth.equals(Optional.empty())) {
 
+					log.info("User transaction body is not empty");
 					// user obj wirt to db
 					User u = userRepository.findById(optionalUserAuth.get()).get();
 					// ------
@@ -215,19 +282,21 @@ public class UserController {
 						ut.setId(uuid);
 						ut.setUser(u);
 						userTransactionRepository.save(ut);
-						return new ResponseEntity("Authorized", HttpStatus.OK);
+						log.info("User Transaction created");
+						return new ResponseEntity(ut, HttpStatus.OK);
 					} else {
+						log.info("User transaction body is not empty");
 						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 					}
-
 				}
-
 				else {
+					log.info("Authentication failed");
 					return new ResponseEntity("CHK CREDENTIALS", HttpStatus.UNAUTHORIZED);
 				}
 			}
 
 		} catch (Exception ex) {
+			log.error(ex);
 			ex.printStackTrace();
 		}
 
@@ -244,6 +313,7 @@ public class UserController {
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth,
 			@RequestBody UserTransaction ut) throws ArrayIndexOutOfBoundsException, InvocationTargetException {
 
+		log.info("Entered Update user");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 
@@ -253,13 +323,15 @@ public class UserController {
 			String pass1 = uNamePwd[1];
 
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
-				return new ResponseEntity("Bhai name and pass daal ", HttpStatus.UNAUTHORIZED);
+				log.info("Authentication not provided");
+				return new ResponseEntity("UNAUTHORIZED", HttpStatus.UNAUTHORIZED);
 			} else {
 
+				log.info("Authentication provided");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 				if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
 						|| !optionalUserAuth.equals(Optional.empty())) {
-
+					
 					User u = userRepository.findById(optionalUserAuth.get()).get();
 					// ------
 					// chk for authentication
@@ -282,12 +354,15 @@ public class UserController {
 							String m = ut.getMerchant();
 
 							userTransactionRepository.updateTransaction(id, user_id, d, a, c, dt, m);
+							log.info("User updated");
 							return new ResponseEntity("Updated", HttpStatus.ACCEPTED);
 						} else {
+							log.info("User data not valid");
 							return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 						}
 
 					} else {
+						log.info("Authentication failed");
 						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 					}
 
@@ -298,6 +373,7 @@ public class UserController {
 			}
 
 		} catch (Exception ex) {
+			log.error(ex);
 			ex.printStackTrace();
 		}
 
@@ -314,6 +390,7 @@ public class UserController {
 	public ResponseEntity getAll(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth,
 			HttpServletResponse response)
 			throws JSONException, JsonProcessingException, ArrayIndexOutOfBoundsException, InvocationTargetException {
+		log.info("Entered get User Transaction");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 
@@ -322,9 +399,11 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
 
+				log.info("Authentication provided");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 				int user_id;
 				if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
@@ -355,14 +434,18 @@ public class UserController {
 
 						}
 
+						log.info("Fetching transaction data");
 						return new ResponseEntity(myTranscation, HttpStatus.ACCEPTED);
 					} else
-						return new ResponseEntity("Not authorized", HttpStatus.ACCEPTED);
+						log.info("Authentication failed");
+						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 				} else
-					return new ResponseEntity("Not authorized", HttpStatus.ACCEPTED);
+					log.info("Authentication not provided");
+					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 			}
 
 		} catch (Exception ex) {
+			log.info(ex);
 			ex.printStackTrace();
 		}
 
@@ -379,6 +462,7 @@ public class UserController {
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth)
 			throws JSONException, JsonProcessingException, ArrayIndexOutOfBoundsException, InvocationTargetException {
 
+		log.info("Entered Delete Transaction");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 
@@ -387,12 +471,15 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
+				log.info("Authentication provided");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 				int user_id;
 				if (optionalUserAuth.isPresent() || optionalUserAuth.get() != 0
 						|| !optionalUserAuth.equals(Optional.empty())) {
+					log.info("User Id is provided");
 					User u = userRepository.findById(optionalUserAuth.get()).get();
 					// ------
 					// chk for authentication
@@ -401,7 +488,7 @@ public class UserController {
 
 					String encode = BCrypt.hashpw(def, BCrypt.gensalt(12));
 					System.out.println("encode is" + encode);
-
+					
 					if (u.getEmail().equals(abc) && BCrypt.checkpw(def, u.getPassword()) == true) {
 
 						user_id = optionalUserAuth.get(); // 178
@@ -409,18 +496,22 @@ public class UserController {
 						Optional<String> ost = userTransactionRepository.findUid(id, user_id);
 						if (ost.isPresent()) {
 							userTransactionRepository.deleteTransaction(id, user_id);
+							log.info("User Deleted");
 							return new ResponseEntity("Deleted", HttpStatus.ACCEPTED);
 						} else {
+							log.info("User ID not found");
 							return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 						}
 
 					} else
+						log.info("Authentication failed");
 						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 				} else
 					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 
 			}
 		} catch (Exception ex) {
+			log.info(ex);
 			ex.printStackTrace();
 		}
 		return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
@@ -438,6 +529,7 @@ public class UserController {
 	public ResponseEntity<FileInfo> uploadFile(@RequestParam("file") MultipartFile file,
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth, @PathVariable String id) {
 
+		log.info("Entered PostImage");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 		System.out.println("1");
@@ -446,9 +538,11 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
 
+				log.info("Authentication provided");
 				System.out.println("2");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 				int user_id;
@@ -469,6 +563,7 @@ public class UserController {
 						if (utopt.isPresent() || !utopt.equals(0) || !utopt.equals(Optional.empty())) {
 							System.out.println("4");
 							if (!file.isEmpty()) {
+								log.info("File exist");
 								try {
 									System.out.println("5");
 									UserTransaction ut = userTransactionRepository.findById(utopt.get()).get();
@@ -504,16 +599,19 @@ public class UserController {
 									// save in attachment table as well
 
 									HttpHeaders headers = new HttpHeaders();
+									log.info("File attached");
 									headers.add("File has been uploaded successfully", filename);
 
 									// return new ResponseEntity<FileInfo>(headers, HttpStatus.OK);
 									return new ResponseEntity("Authorized", HttpStatus.OK);
 								} catch (Exception ex) {
+									log.error(ex);
 									return new ResponseEntity<FileInfo>(HttpStatus.BAD_REQUEST);
 
 								}
 
 							} else {
+								log.info("File does not exist");
 								return new ResponseEntity<FileInfo>(HttpStatus.UNAUTHORIZED);
 							}
 						} else {
@@ -524,11 +622,13 @@ public class UserController {
 						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 					}
 				} else {
+					log.info("Authentication failed");
 					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 				}
 
 			}
 		} catch (Exception ex) {
+			log.error(ex);
 			ex.printStackTrace();
 		}
 		return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
@@ -544,6 +644,7 @@ public class UserController {
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth, HttpServletResponse response,
 			@PathVariable String id) {
 
+		log.info("Entered get Image");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 		try {
@@ -551,6 +652,7 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
 
@@ -567,6 +669,7 @@ public class UserController {
 						user_id = optionalUserAuth.get(); // 9
 						if (user_id != 0) {
 
+							log.info("User ID found");
 							Optional<String> opt = userTransactionRepository.findIdByUserIdwa(id, user_id); // uuid
 							String opt_id = opt.get().toString();
 							System.out.println("opt_id" + opt_id); // 234567890-= uuid
@@ -582,6 +685,7 @@ public class UserController {
 
 							}
 
+							log.info("Fetching Image");
 							return new ResponseEntity(myTranscation, HttpStatus.ACCEPTED);
 
 						}
@@ -590,6 +694,7 @@ public class UserController {
 			}
 
 		} catch (Exception ex) {
+			log.error(ex);
 			System.out.println(ex.getMessage());
 		}
 
@@ -605,6 +710,7 @@ public class UserController {
 			@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth)
 			throws JSONException, JsonProcessingException, ArrayIndexOutOfBoundsException, InvocationTargetException {
 
+		log.info("Entered Delete Image");
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
 
@@ -613,6 +719,7 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
@@ -641,9 +748,28 @@ public class UserController {
 
 							if (attach_id.isPresent()) {
 
-								attachmentTransactionRepository.deleteTransaction(attachment_id);
-								return new ResponseEntity("Deleted", HttpStatus.ACCEPTED);
+								// get file
+								log.info("Image ID found");
+								
+								Attachments att = attachmentTransactionRepository.findIdByAttachIdswa(attachment_id);
+
+								List<String> stratt = attachmentTransactionRepository.findIdu(attachment_id);
+								String urltobedeleteed = stratt.get(0).toString();
+
+								File file = new File(urltobedeleteed);
+								if (file.exists()) {
+									file.delete();
+									attachmentTransactionRepository.deleteTransaction(attachment_id);
+									log.info("Image Deleted");
+									return new ResponseEntity("Deleted", HttpStatus.ACCEPTED);
+								}
+								else {
+									log.info("Image does not exist");
+									return new ResponseEntity("File cannot be deleted", HttpStatus.UNAUTHORIZED);
+								}
+														
 							} else {
+								log.info("Image ID does not found");
 								return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 							}
 
@@ -656,6 +782,7 @@ public class UserController {
 					} else
 						return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 				} else
+					log.info("Authentication failed");
 					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 
 			}
@@ -668,6 +795,7 @@ public class UserController {
 	@PutMapping(value = "/transaction/{id}/attachments/{attachment_id}")
 	public ResponseEntity updateFiles(@RequestHeader(value = "Authorization", defaultValue = "No Auth") String auth,
 			@PathVariable String id, @PathVariable String attachment_id, @RequestBody Attachments attachments) {
+		log.info("Entered Update Image");
 
 		byte[] bytes = Base64.decodeBase64(auth.split(" ")[1]);
 		String uNamePwd[] = new String(bytes).split(":");
@@ -677,8 +805,10 @@ public class UserController {
 			String username1 = uNamePwd[0];
 			String pass1 = uNamePwd[1];
 			if (username1.isEmpty() && pass1.isEmpty() && username1.length() == 0 && pass1.length() == 0) {
+				log.info("Authentication not provided");
 				return new ResponseEntity("Unauthorized ", HttpStatus.UNAUTHORIZED);
 			} else {
+				log.info("Authentication provided");
 				System.out.println("1");
 				Optional<Integer> optionalUserAuth = userRepository.findIdByUserName(uNamePwd[0]);
 				int user_id;
@@ -707,6 +837,7 @@ public class UserController {
 
 							if (attach_id.isPresent()) {
 
+								log.info("Image ID found");
 								Attachments att = attachmentTransactionRepository.findIdByAttachIdswa(attachment_id);
 
 								List<String> stratt = attachmentTransactionRepository.findIdu(attachment_id);
@@ -729,15 +860,16 @@ public class UserController {
 
 									String urls = attachments.getUrl(); // body ?????
 									System.out.println("urls" + urls);
-									String urltosplit = urls.substring(urls.lastIndexOf("\\") + 1); // studentid.png
+									String urltosplit = urls.substring(urls.lastIndexOf("/") + 1); // studentid.png
 									System.out.println("urltosplit" + urltosplit);
+									String ccc = "/" + urltosplit;
 									File fi = new File(file_upload_location + File.separator);
 
 									String pa = fi.toPath().toString();
 									System.out.println("pa" + pa);
 									FileUtils.copyFileToDirectory(new File(urls), fi);
 
-									String pat = pa + urltosplit;
+									String pat = pa + ccc;
 									System.out.println("pat" + pat);
 									att.setAttachment_id(attachment_id);
 									att.setUrl(pat);
@@ -746,11 +878,13 @@ public class UserController {
 									attachmentTransactionRepository.deleteById(attachment_id);
 
 									attachmentTransactionRepository.save(att);
+									log.info("Image updated");
 
 									return new ResponseEntity("Authorized ", HttpStatus.OK);
 
 								} else {
-									System.out.println("adasds");
+									
+									return new ResponseEntity<FileInfo>(HttpStatus.UNAUTHORIZED);
 								}
 
 							}
@@ -763,6 +897,7 @@ public class UserController {
 					}
 
 				} else {
+					log.info("User ID not found");
 					return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
 				}
 
@@ -770,6 +905,7 @@ public class UserController {
 		} catch (
 
 		Exception ex) {
+			log.error(ex);
 			ex.printStackTrace();
 		}
 		return new ResponseEntity("Not authorized", HttpStatus.UNAUTHORIZED);
