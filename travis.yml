@@ -51,21 +51,21 @@ deploy:
     on:
       branch: test1
   
-  - provider: s3
+  #- provider: s3
 
-    local_dir: webapp_artifact
+    #local_dir: webapp_artifact
 
-    bucket: $s3_bucket_png
+    #bucket: $s3_bucket_png
 
-    region: us-east-1
+    #region: us-east-1
 
-    skip_cleanup: true
+    #skip_cleanup: true
 
-    access_key_id: $access_key_id
+    #access_key_id: $access_key_id
 
-    secret_access_key: $secret_access_key
-    on:
-      branch: test
+    #secret_access_key: $secret_access_key
+    #on:
+      #branch: test
 
   - provider: codedeploy
     access_key_id: $access_key_id
