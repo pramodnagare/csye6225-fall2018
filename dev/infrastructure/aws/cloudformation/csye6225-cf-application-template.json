@@ -397,7 +397,7 @@
       "S3bucket":{  
          "Type":"AWS::S3::Bucket",
          "Properties":{  
-            "BucketName":"csye6225-fall2018-nagarep.me.tld.csye6225.com"
+            "BucketName":"csye6225-fall2018-patelpall.me.tld.csye6225.com"
          }
       },
       "RDSInstance":{  
