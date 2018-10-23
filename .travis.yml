@@ -19,6 +19,9 @@ branches:
 script:
   - pwd
   - cd dev/webapplication/demo
+  - ./mvnw clean install -B
+  - ./mvnw clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sona
+  - pwd
   - ./mvnm war
   - cd build/libs
   - ls -al
