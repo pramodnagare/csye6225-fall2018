@@ -14,7 +14,7 @@ branches:
 
 script:
   - pwd
-  - cd webapp
+  - cd dev/webapplication/demo
   - ./gradlew war
   - cd build/libs
   - ls -al
@@ -27,7 +27,7 @@ after_success:
   - ls -al
   - mkdir codedeploy_artifact
   - cp infrastructure/aws/codedeploy/*.sh .
-  - cp infrastructure/aws/codedeploy/*.yml .
+  #- cp infrastructure/aws/codedeploy/*.yml .
   - zip -r csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip webapp/build/libs/ROOT.war *.sh *.yml
   - ls -al
   - mv csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip codedeploy_artifact/
