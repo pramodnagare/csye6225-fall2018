@@ -4,8 +4,10 @@ jdk:
 
 sudo: false
 
-install: true
-
+install:
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+  - mvn test -B
+  - ./mvnw test -B
 branches:
 
   only:
@@ -15,7 +17,7 @@ branches:
 script:
   - pwd
   - cd dev/webapplication/demo
-  - ./gradlew war
+  - ./mvnm war
   - cd build/libs
   - ls -al
   - cd ../../..
