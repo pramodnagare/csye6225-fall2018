@@ -118,7 +118,7 @@
 								"s3:Delete*"
 							],
 							"Effect": "Allow",
-							"Resource": ["arn:aws:s3:::code-deploy.csye6225-fall2018-nagarep.me.tld", "arn:aws:s3:::csye6225-fall2018-nagarep.me.tld.csye6225.com"]
+							"Resource": ["arn:aws:s3:::code-deploy.csye6225-fall2018-patelpall.me.tld", "arn:aws:s3:::csye6225-fall2018-patelpall.me.tld.csye6225.com"]
 						}]
 					}
 				}]
