@@ -254,7 +254,7 @@
 
       "ParameterKey":"EC2TAGNAME",
 
-      "ParameterValue":"ec2",
+      "ParameterValue":"EC2Webapplication",
 
       "UsePreviousValue":true
 
