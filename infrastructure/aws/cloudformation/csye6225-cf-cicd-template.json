@@ -40,7 +40,7 @@
 								"codedeploy:GetApplicationRevision"
 							],
 
-							"Resource": ["arn:aws:codedeploy:us-east-1:515649345368:application:CSYE6225WebappCodeDeploy"]
+							"Resource": ["arn:aws:codedeploy:us-east-1:577654183513:application:CSYE6225WebappCodeDeploy"]
 	
 						},
 						{
@@ -59,9 +59,9 @@
 								"codedeploy:GetDeploymentConfig"
 							],
 							"Resource": [
-							"arn:aws:codedeploy:us-east-1:515649345368:deploymentconfig:CodeDeployDefault.OneAtATime",
-							"arn:aws:codedeploy:us-east-1:515649345368:deploymentconfig:CodeDeployDefault.HalfAtATime",
-							"arn:aws:codedeploy:us-east-1:515649345368:deploymentconfig:CodeDeployDefault.AllAtOnce"
+							"arn:aws:codedeploy:us-east-1:577654183513:deploymentconfig:CodeDeployDefault.OneAtATime",
+							"arn:aws:codedeploy:us-east-1:577654183513:deploymentconfig:CodeDeployDefault.HalfAtATime",
+							"arn:aws:codedeploy:us-east-1:577654183513:deploymentconfig:CodeDeployDefault.AllAtOnce"
 							]
 						}
 					]
@@ -118,7 +118,7 @@
 								"s3:Delete*"
 							],
 							"Effect": "Allow",
-							"Resource": ["arn:aws:s3:::code-deploy.csye6225-fall2018-nagarep.me.tld", "arn:aws:s3:::csye6225-fall2018-nagarep.me.tld.csye6225.com"]
+							"Resource": ["arn:aws:s3:::code-deploy.csye6225-fall2018-shahharsh3.me.tld", "arn:aws:s3:::csye6225-fall2018-shahharsh3.me.tld.csye6225.com"]
 						}]
 					}
 				}]
