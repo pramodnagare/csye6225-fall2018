@@ -17,8 +17,8 @@
 							"s3:PutObject"
 						],
 						"Resource": [
-							"arn:aws:s3:::code-deploy.*",
-							"arn:aws:s3:::web-app.*"
+							"arn:aws:s3:::code-deploy.csye6225-fall2018-shahharsh3.me.tld",
+							"arn:aws:s3:::csye6225-fall2018-shahharsh3.me.tld.csye6225.com"
 						]
 					}]
 				},
@@ -108,7 +108,7 @@
 				},
 				"Path": "/",
 				"Policies": [{
-					"PolicyName": "ec2_s3_full_access1",
+					"PolicyName": "ec2_s3_full_access",
 					"PolicyDocument": {
 						"Version": "2012-10-17",
 						"Statement": [{
@@ -147,7 +147,7 @@
 		"S3bucket":{  
 			 "Type":"AWS::S3::Bucket",
 			 "Properties":{  
-			    "BucketName":"code-deploy.csye6225-fall2018-nagarep.me.tld"
+			    "BucketName":"code-deploy.csye6225-fall2018-shahharsh3.me.tld"
 			 }
 		      },
 		"DeploymentGroup": {
@@ -164,7 +164,7 @@
 				"Ec2TagFilters": [{
 					"Key": "Name",
 					"Type": "KEY_AND_VALUE",
-					"Value": "ec2"
+					"Value": "EC2Webapplication"
 				}],
 				"ServiceRoleArn": {
 					"Fn::GetAtt": [
