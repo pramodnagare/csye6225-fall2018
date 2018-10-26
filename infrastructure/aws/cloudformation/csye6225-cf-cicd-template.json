@@ -147,7 +147,7 @@
 		"S3bucket":{  
 			 "Type":"AWS::S3::Bucket",
 			 "Properties":{  
-			    "BucketName":"code-deploy.csye6225-fall2018-nagarep.me.tld"
+			    "BucketName":"code-deploy.csye6225-fall2018-patelpall.me.tld"
 			 }
 		      },
 		"DeploymentGroup": {
