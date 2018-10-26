@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo systemctl start tomcat.service
+sudo systemctl stop tomcat.service
 cd /
 source env.sh
 cd /opt/tomcat
