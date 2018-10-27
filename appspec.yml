@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
-    destination: /opt/tomcat/
+    destination: /opt/tomcat/webapps
 
 hooks:
   AfterInstall:
