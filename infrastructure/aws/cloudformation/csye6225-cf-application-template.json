@@ -339,151 +339,92 @@
                   "Fn::Join":[  
                      "\n",
                      [  
-                        "#!/bin/bash -xe ",
-                        "yum install ruby ntp wget java-1.8.0-openjdk-devel -y",
-                        "systemctl start ntpd",
-                        "systemctl enable ntpd",
-                        "groupadd tomcat",
-                        "sudo -s",
-                        "echo '#!/bin/bash' >> env.sh",
-                        {  
-                           "Fn::Join":[  
-                              "",
-                              [  
-                                 "echo 'export DBUSERNAME='",
-                                 {  
-                                    "Fn::Join":[  
-                                       "",
-                                       [  
-                                          {  
-                                             "Ref":"DBUSERNAME"
-                                          }
-                                       ]
+                     "#!/bin/bash -xe ",
+                     "sudo su",
+                     "yum install httpd -y",
+                                "systemctl enable httpd.service",
+                                "systemctl start httpd.service",
+                                "yum update -y",
+                                "yum install ruby -y",
+                                "yum install wget -y",
+                                "yum install python -y",
+                                "wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install",
+                                "chmod +x ./install",
+                                "./install auto",
+                                "service codedeploy-agent start",
+                                "mkdir -p /var/awslogs/etc/",
+                                "ar/awslogs/etc/ && sudo wget https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py",
+                                "yum install ruby ntp wget java-1.8.0-openjdk-devel -y",
+                                "systemctl start ntpd",
+                                "systemctl enable ntpd",
+                                "groupadd tomcat",
+                                "useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat",
+                                "cd /tmp",
+                                "wget http://apache.mirrors.pair.com/tomcat/tomcat-8/v8.5.34/bin/apache-tomcat-8.5.34.tar.gz",
+                                "mkdir /opt/tomcat",
+                                "sudo tar xvf apache-tomcat-8*tar.gz -C /opt/tomcat --strip-components=1",
+                                "cd /opt/tomcat",
+                                "chgrp -R tomcat /opt/tomcat",
+                                "chmod -R g+r conf",
+                                "chmod g+x conf",
+                                "chown -R tomcat webapps/ work/ temp/ logs/",
+                                "cd /opt && sudo chown -R tomcat tomcat/",
+                                "#cd /usr/lib/systemd/system",
+                                "cd /opt/tomcat",
+                                "mkdir uploads",
+                                "chmod o+rwx uploads/",
+                                "cd /etc/systemd/system",
+                                "touch tomcat.service",
+                                "echo '[Unit]' > tomcat.service",
+                                "echo 'Description=Apache Tomcat Web Application Container' >> tomcat.service",
+                                "echo 'After=syslog.target network.target' >> tomcat.service",
+                                "echo '[Service]' >> tomcat.service",
+                                "echo 'Type=forking' >> tomcat.service",
+                                "echo 'Environment=JAVA_HOME=/usr/lib/jvm/jre' >> tomcat.service",
+                                "echo 'Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid' >> tomcat.service",
+                                "echo 'Environment=CATALINA_HOME=/opt/tomcat' >> tomcat.service",
+                                "echo 'Environment=CATALINA_BASE=/opt/tomcat' >> tomcat.service",
+                                "#echo 'Environment=\"CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC\"' >> tomcat.service",
+                                "echo 'Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom\"' >> tomcat.service",
+                                "echo 'ExecStart=/opt/tomcat/bin/startup.sh' >> tomcat.service",
+                                "echo 'ExecStop=/bin/kill -15 $MAINPID' >> tomcat.service",
+                                "echo 'User=tomcat' >> tomcat.service",
+                                "echo 'Group=tomcat' >> tomcat.service",
+                                "echo 'UMask=0007' >> tomcat.service",
+                                "echo 'RestartSec=10' >> tomcat.service",
+                                "echo 'Restart=always' >> tomcat.service",
+                                "echo '[Install]' >> tomcat.service",
+                                "echo 'WantedBy=multi-user.target' >> tomcat.service",
+                                "#systemctl daemon-reload",
+                                "cd /opt/tomcat/bin",
+                                "touch setenv.sh",
+                                "echo 'JAVA_OPTS=\"-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true\"' >> setenv.sh",
+                                "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.profiles.active=Dev\"' >> setenv.sh",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://",
+                                            {
+                                                "Fn::GetAtt": [
+                                                    "RDSInstance",
+                                                    "Endpoint.Address"
+                                                ]
+                                            },
+                                            ":3306/csye6225\"' >> setenv.sh \n"
+                                        ]
                                     ]
-                                 },
-                                 " >> env.sh \n"
-                              ]
-                           ]
-                        },
-                        {  
-                           "Fn::Join":[  
-                              "",
-                              [  
-                                 "echo 'export APPS3BUCKET='",
-                                 {  
-                                    "Fn::Join":[  
-                                       "",
-                                       [  
-                                          {  
-                                             "Ref":"S3BUCKETNAME"
-                                          }
-                                       ]
-                                    ]
-                                 },
-                                 " >> env.sh \n"
-                              ]
-                           ]
-                        },
-                        {  
-                           "Fn::Join":[  
-                              "",
-                              [  
-                                 "echo 'export DBPASSWORD='",
-                                 {  
-                                    "Fn::Join":[  
-                                       "",
-                                       [  
-                                          {  
-                                             "Ref":"DBPASSWORD"
-                                          }
-                                       ]
-                                    ]
-                                 },
-                                 " >> env.sh \n"
-                              ]
-                           ]
-                        },
-			{  
-				"Fn::Join":[  
-		                      "",
-		                      [  
-		                         "echo 'export DBHOSTNAME='",
-		                         {  
-		                            "Fn::GetAtt":[  
-		                               "RDSInstance",
-		                               "Endpoint.Address"
-		                            ]
-		                         },
-		                         " >> env.sh \n"
-		                      ]
-		                   ]
-		                },
-                        {  
-                           "Fn::Join":[  
-                              "",
-                              [  
-                                 "echo 'export DBSCHEMA='",
-                                 {  
-                                    "Fn::Join":[  
-                                       "",
-                                       [  
-                                          {  
-                                             "Ref":"DBSCHEMA"
-                                          }
-                                       ]
-                                    ]
-                                 },
-                                 " >> env.sh \n"
-                              ]
-                           ]
-                        },
-                        "useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat",
-                        "cd /tmp",
-                        "wget http://apache.mirrors.pair.com/tomcat/tomcat-8/v8.5.34/bin/apache-tomcat-8.5.34.tar.gz",
-                        "mkdir /opt/tomcat",
-                        "tar xvf apache-tomcat-8*tar.gz -C /opt/tomcat --strip-components=1",
-                        "cd /opt/tomcat",
-                        "chgrp -R tomcat /opt/tomcat",
-                        "chmod -R g+r conf",
-                        "chmod g+x conf",
-                        "chown -R tomcat webapps/ work/ temp/ logs/",
-                        "cd /usr/lib/systemd/system",
-                        "touch tomcat.service",
-                        "echo '[Unit]' > tomcat.service",
-                        "echo 'Description=Apache Tomcat Web Application Container' >> tomcat.service",
-                        "echo 'After=syslog.target network.target' >> tomcat.service",
-                        "echo '[Service]' >> tomcat.service",
-                        "echo 'Type=forking' >> tomcat.service",
-                        "echo 'Environment=JAVA_HOME=/usr/lib/jvm/jre' >> tomcat.service",
-                        "echo 'Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid' >> tomcat.service",
-                        "echo 'Environment=CATALINA_HOME=/opt/tomcat' >> tomcat.service",
-                        "echo 'Environment=CATALINA_BASE=/opt/tomcat' >> tomcat.service",
-                        "echo 'Environment=\"CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC\"' >> tomcat.service",
-                        "echo 'Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom\"' >> tomcat.service",
-                        "echo 'ExecStart=/opt/tomcat/bin/startup.sh' >> tomcat.service",
-                        "echo 'ExecStop=/bin/kill -15 $MAINPID' >> tomcat.service",
-                        "echo 'User=tomcat' >> tomcat.service",
-                        "echo 'Group=tomcat' >> tomcat.service",
-                        "echo 'UMask=0007' >> tomcat.service",
-                        "echo 'RestartSec=10' >> tomcat.service",
-                        "echo 'Restart=always' >> tomcat.service",
-                        "echo '[Install]' >> tomcat.service",
-                        "echo 'WantedBy=multi-user.target' >> tomcat.service",
-                        "systemctl daemon-reload",
-                        "#systemctl start cloudwatch.service",
-                        "#systemctl enable cloudwatch.service",
-                        "systemctl enable tomcat.service",
-                        "systemctl start tomcat.service",
-                        "wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm",
-                        "sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm",
-                        "sudo yum install mysql-server -y",
-                        "sudo systemctl start mysqld",
-			"sudo yum install unzip -y \n",
-			"sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
-			"sudo chmod +x ./install \n",
-			"sudo ./install auto \n",
-			"sudo source /env.sh",
-			"sudo service codedeploy-agent start \n"
+                                },
+                                "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=csye6225master\"'  >> setenv.sh",
+                                "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=csye6225password\"'  >> setenv.sh",
+                                "#systemctl daemon-reload",
+                                "#systemctl start cloudwatch.service",
+                                "#systemctl enable cloudwatch.service",
+                                "systemctl enable tomcat.service",
+                                "systemctl start tomcat.service",
+                                "yum install mariadb mariadb-server -y",
+                                "systemctl enable mariadb.service",
+                                "systemctl start mariadb.service"
                      ]
                   ]
                }
