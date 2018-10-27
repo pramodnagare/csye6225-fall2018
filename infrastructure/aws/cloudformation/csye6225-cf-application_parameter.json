@@ -44,7 +44,7 @@
 
       "ParameterKey":"FPWB1",
 
-      "ParameterValue":"80",
+      "ParameterValue":"8080",
 
       "UsePreviousValue":true
 
@@ -54,7 +54,7 @@
 
       "ParameterKey":"TPWB1",
 
-      "ParameterValue":"80",
+      "ParameterValue":"8080",
 
       "UsePreviousValue":true
 
