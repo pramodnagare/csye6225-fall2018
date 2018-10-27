@@ -425,7 +425,7 @@ public class S3Controllers {
 	
 	
 	String clientRegion = "us-east-1";
-	String bucketName = "bucketassignmet4";
+	String bucketName = "csye6225-fall2018-nagarep.me.tld.csye6225.com";
 	// String fileObjKeyName = "firstattempt";
 	// String fileName = "C:\\upload";
 
