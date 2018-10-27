@@ -3,16 +3,16 @@ os: linux
 
 files:
   - source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
-    destination: /opt/tomcat/webapps
+    destination: /opt/tomcat/
 
 hooks:
   AfterInstall:
-   - location: ./afterInstall.sh
+   - location: ./infrastructure/aws/codedeploy/afterInstall.sh
      timeout: 180
      runas: centos
   ApplicationStart:
-   - location: ./applicationStart.sh
-     timeout: 180
+   - location: ./infrastructure/aws/codedeploy/applicationStart.sh
+     timeout: 300
      runas: centos
   #ValidateService:
    #- location: ./validateService.sh

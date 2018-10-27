@@ -1,6 +1,7 @@
 #!/bin/bash
-sudo systemctl start tomcat.service
-cd /
+#sudo systemctl stop tomcat.service
+sudo systemctl start tomacat.service
+#cd /
 source env.sh
-cd /opt/tomcat/webapps
-java -jar demo-0.0.1-SNAPSHOT.war
+#cd /opt/tomcat
+#java -jar demo-0.0.1-SNAPSHOT.war
