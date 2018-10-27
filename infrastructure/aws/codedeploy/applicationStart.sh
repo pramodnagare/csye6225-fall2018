@@ -2,7 +2,7 @@
 #sudo systemctl stop tomcat.service
 sudo cd /
 source env.sh
-sudo systemctl start tomacat.service
+sudo systemctl start tomcat.service
 #cd /
 #source env.sh
 #cd /opt/tomcat
