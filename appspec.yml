@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
-    destination: /opt/tomcat/webapps
+    destination: /opt/tomcat/
 
 hooks:
   AfterInstall:
@@ -12,7 +12,7 @@ hooks:
      runas: centos
   ApplicationStart:
    - location: ./applicationStart.sh
-     timeout: 180
+     timeout: 300
      runas: centos
   #ValidateService:
    #- location: ./validateService.sh
