@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'war'
 
-war {archiveName="demo.war"}
+war {archiveName="ROOT.war"}
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
