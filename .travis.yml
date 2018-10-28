@@ -19,7 +19,7 @@ script:
   - cd build/libs
   
   - ls -al
-  - cd ../..
+  - cd ../../..
   - pwd
   - ls -al
 
