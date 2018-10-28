@@ -2,7 +2,8 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
+  #- source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
+  - source: ./webapplication/build/libs/ROOT.war
     destination: /opt/tomcat/webapps
 
 hooks:
