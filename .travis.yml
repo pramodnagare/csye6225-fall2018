@@ -8,11 +8,14 @@ sudo: true
 script:
   - pwd
   - cd webapplication
-  - mvn clean install -B
- 
+  #- mvn clean install -B
+  - ./gradlew war
+  
   - pwd
   
-  - cd target
+  #- cd target
+  - cd build/libs
+  
   - ls -al
   - cd ../..
   - pwd
@@ -24,7 +27,7 @@ after_success:
   - mkdir codedeploy_artifact
   - cp infrastructure/aws/codedeploy/*.sh .
   #- cp infrastructure/aws/codedeploy/*.yml .
-  - zip -r csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip webapplication/target/demo-0.0.1-SNAPSHOT.war *.sh *.yml
+  - zip -r csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip webapplication/build/libs/ROOT.war *.sh *.yml
   - ls -al
   - mv csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip codedeploy_artifact/
   - ls -al
