@@ -37,7 +37,7 @@ public class UserTransaction {
 	private User user;
 
 	public UserTransaction() {
-		attachments = new ArrayList<>();
+		attachments = new ArrayList<String>();
 	}
 
 	public List<Attachments> getAttachments() {
