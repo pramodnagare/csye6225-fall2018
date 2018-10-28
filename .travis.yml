@@ -9,6 +9,8 @@ script:
   - pwd
   - cd webapplication
   #- mvn clean install -B
+  
+  - chmod +x gradlew 
   - ./gradlew war
   
   - pwd
