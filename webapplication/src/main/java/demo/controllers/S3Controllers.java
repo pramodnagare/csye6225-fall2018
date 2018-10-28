@@ -559,7 +559,7 @@ public class S3Controllers {
 							// new changes//
 							ObjectMapper mapper = new ObjectMapper();
 							List<Attachments> li = attachmentTransactionRepository.findIdByu(opt_id);
-							List<String> myTranscation = new ArrayList<>();
+							List<String> myTranscation = new ArrayList<String>();
 							JSONObject bodyObject = new JSONObject("{}");
 							for (Attachments t : li) {
 								bodyObject.put("url", t.getUrl());
