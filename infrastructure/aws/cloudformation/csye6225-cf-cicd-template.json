@@ -36,56 +36,50 @@
       "AWSACCOUNTNUMBER":{  
          "Description":"AWS User Account Number",
          "Type":"String"
-      }
+      },
+	  
+	  "TravisUsername":{
+		 "Description":"Username from the travis account",
+		 "Type":"String"
+	  }
    },
    "Resources":{  
       "TravisUploadToS3":{  
          "Type":"AWS::IAM::ManagedPolicy",
          "Properties":{  
-            "Description":"Policy for Travis to put objects in S3",
-            "Path":"/",
+			"Description": "Policy for Travis to put objects in S3",
+			"Path":"/",
             "PolicyDocument":{  
                "Version":"2012-10-17",
                "Statement":[  
                   {  
                      "Effect":"Allow",
                      "Action":[  
-                        "s3:PutObject"
+                        "s3:Put*"
                      ],
                      "Resource":[  
                         {  
                            "Fn::Join":["",
                               [  
-                                 "\"arn:aws:s3:::",
+                                 "arn:aws:s3:::",
                                  {"Ref":"CDbucket"},
-                                 "\""
+                                 "*"
                               ]
                            ]
-                        },
-                        {
-							"Fn::Join":["",
-                              [  
-                                 "\"arn:aws:s3:::",
-                                 {"Ref":"WBbucket"},
-                                 "\""
-                              ]
-                           ]
-						
-						}
+                        }
                      ]
                   }
                ]
             },
             "Users":[  
-               "travis"
+               {"Ref":"TravisUsername"}
             ]
          }
       },
       "TravisCodeDeploy":{  
          "Type":"AWS::IAM::ManagedPolicy",
-         "Properties":{  
-            "Description":"Policy for Travis to call codedeploy to initiate deployment on EC2",
-            "Path":"/",
+         "Properties":{
+			"Description": "Policy for Travis to Deploy S3",
             "PolicyDocument":{  
                "Version":"2012-10-17",
                "Statement":[  
@@ -96,21 +90,7 @@
                         "codedeploy:GetApplicationRevision"
                      ],
                      "Resource":[  
-                        {  
-                           "Fn::Join":["",
-                              [  
-                                 "\"arn:aws:codedeploy:us-east-1:", 
-								  {  
-									 "Ref":"AWSACCOUNTNUMBER"
-								  },
-								  ":application:",
-								  {  
-									 "Ref":"ApplicationName"
-								  },
-                                 "\""
-                              ]
-                           ]
-                        }
+                        "arn:aws:codedeploy:*:*:application:CSYE6225CodeDeployApplication"
                      ]
                   },
                   {  
@@ -129,49 +109,38 @@
                         "codedeploy:GetDeploymentConfig"
                      ],
                      "Resource":[  
-                        {  
-                           "Fn::Join":["",
-                              [  
-                                 "\"arn:aws:codedeploy:us-east-1:",
-								  {  
-									 "Ref":"AWSACCOUNTNUMBER"
-								  },
-								  "deploymentconfig:CodeDeployDefault.OneAtATime\""
-                              ]
-                           ]
-                        },
-						{  
-                           "Fn::Join":["",
-                              [  
-                                 "\"arn:aws:codedeploy:us-east-1:",
-								  {  
-									 "Ref":"AWSACCOUNTNUMBER"
-								  },
-								  "deploymentconfig:CodeDeployDefault.HalfAtATime\""
-                              ]
-                           ]
-                        },
-						{  
-                           "Fn::Join":["",
-                              [  
-                                 "\"arn:aws:codedeploy:us-east-1:",
-								  {  
-									 "Ref":"AWSACCOUNTNUMBER"
-								  },
-								  "deploymentconfig:CodeDeployDefault.AllAtOnce\""
-                              ]
-                           ]
-                        }
+                        "arn:aws:codedeploy:*:*:deploymentconfig:CodeDeployDefault.OneAtATime",
+						"arn:aws:codedeploy:*:*:deploymentconfig:CodeDeployDefault.HalfAtATime",
+						"arn:aws:codedeploy:*:*:deploymentconfig:CodeDeployDefault.AllAtOnce"
                      ]
                   }
                ]
             },
             "Users":[  
-               "travis"
+               {"Ref":"TravisUsername"}
             ]
          }
       },
 		
+	"CodeDeployServiceRole": {
+			"Type": "AWS::IAM::Role",
+			"Properties": {
+				"RoleName": "CodeDeployServiceRole",
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{
+						"Effect": "Allow",
+						"Principal": {
+							"Service": "codedeploy.amazonaws.com"
+						},
+						"Action": ["sts:AssumeRole"]
+					}]
+				},
+				"ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"],
+				"Path": "/"
+			}
+		},
+	
       "ec2role":{  
          "Type":"AWS::IAM::Role",
          "Properties":{  
@@ -194,36 +163,32 @@
                   }
                ]
             },
-            "Path":"/",
-            "Policies":[  
-               {  
+            "Path":"/"
+		}
+	},
+	
+	"CodedeployPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
                   "PolicyName":"Codedeploy-EC2-S3",
                   "PolicyDocument":{  
                      "Version":"2012-10-17",
                      "Statement":[  
                         {  
                            "Action":[  
-                              "s3:Get*",
-                              "s3:Put*",
-							  "s3:Delete*"
+							"s3:Get*",
+							"s3:Put*",
+							"s3:Delete*",
+							"s3:List*"
                            ],
                            "Effect":"Allow",
-                           "Resource":[  
-							{  
-							   "Fn::Join":["",
-								  [  
-									 "\"arn:aws:s3:::",
-									 {"Ref":"CDbucket"},
-									 "\""
-								  ]
-							   ]
-							},
+                           "Resource":[
 							{
 								"Fn::Join":["",
 								  [  
-									 "\"arn:aws:s3:::",
+									 "arn:aws:s3:::",
 									 {"Ref":"WBbucket"},
-									 "\""
+									 "*"
 								  ]
 							   ]
 							
@@ -231,11 +196,14 @@
                            ]
                         }
                      ]
-                  }
-               }
-            ]
-         }
-      },
+                  },
+				  "Roles": [
+                    {
+                        "Ref": "ec2role"
+                    }
+                ]
+      }
+	  },
       "Ec2InstanceProfile":{  
          "Type":"AWS::IAM::InstanceProfile",
          "Properties":{  
@@ -251,24 +219,6 @@
          }
       },
 	  	  
-	"CodeDeployServiceRole": {
-			"Type": "AWS::IAM::Role",
-			"Properties": {
-				"RoleName": "CodeDeployServiceRole",
-				"AssumeRolePolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [{
-						"Effect": "Allow",
-						"Principal": {
-							"Service": "codedeploy.amazonaws.com"
-						},
-						"Action": ["sts:AssumeRole"]
-					}]
-				},
-				"ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"],
-				"Path": "/"
-			}
-		},
       "CodeDeployApplication":{  
          "Type":"AWS::CodeDeploy::Application",
          "Properties":{  
@@ -277,19 +227,11 @@
             }
          }
       },
-      "S3bucket":{  
-         "Type":"AWS::S3::Bucket",
-         "Properties":{  
-            "BucketName":{  
-               "Ref":"CDbucket"
-            }
-         }
-      },
       "DeploymentGroup":{  
          "Type":"AWS::CodeDeploy::DeploymentGroup",
          "Properties":{  
             "ApplicationName":{  
-               "Ref":"ApplicationName"
+               "Ref":"CodeDeployApplication"
             },
             "DeploymentGroupName":{  
                "Ref":"DeploymentGroupName"
@@ -312,6 +254,14 @@
                   "CodeDeployServiceRole",
                   "Arn"
                ]
+            }
+         }
+      },
+	  "S3bucket":{  
+         "Type":"AWS::S3::Bucket",
+         "Properties":{  
+            "BucketName":{  
+               "Ref":"CDbucket"
             }
          }
       }

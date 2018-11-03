@@ -44,7 +44,7 @@
 
       "ParameterKey":"FPWB1",
 
-      "ParameterValue":"8080",
+      "ParameterValue":"80",
 
       "UsePreviousValue":true
 
@@ -54,7 +54,7 @@
 
       "ParameterKey":"TPWB1",
 
-      "ParameterValue":"8080",
+      "ParameterValue":"80",
 
       "UsePreviousValue":true
 
@@ -114,7 +114,7 @@
 
       "ParameterKey":"FPWB3",
 
-      "ParameterValue":"443",
+      "ParameterValue":"8080",
 
       "UsePreviousValue":true
 
@@ -124,7 +124,7 @@
 
       "ParameterKey":"TPWB3",
 
-      "ParameterValue":"443",
+      "ParameterValue":"8080",
 
       "UsePreviousValue":true
 
@@ -254,7 +254,7 @@
 
       "ParameterKey":"EC2TAGNAME",
 
-      "ParameterValue":"ec2",
+      "ParameterValue":"EC2Webapplication",
 
       "UsePreviousValue":true
 
@@ -314,7 +314,7 @@
 
       "ParameterKey":"S3BUCKETNAME",
 
-      "ParameterValue":"csye6225-fall2018-nagarep.me.tld.csye6225.com",
+      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
 
       "UsePreviousValue":true
 

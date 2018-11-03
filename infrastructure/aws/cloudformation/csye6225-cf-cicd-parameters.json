@@ -1,17 +1,17 @@
 [  
    {  
       "ParameterKey":"CDbucket",
-      "ParameterValue":"code-deploy.csye6225-fall2018-nagarep.me.tld",
+      "ParameterValue":"code-deploy.csye6225-fall2018-nagarep.me",
       "UsePreviousValue":true
    },
    {  
       "ParameterKey":"WBbucket",
-      "ParameterValue":"csye6225-fall2018-nagarep.me.tld.csye6225.com",
+      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
       "UsePreviousValue":true
    },
    {  
       "ParameterKey":"ApplicationName",
-      "ParameterValue":"CSYE6225WebappCodeDeploy",
+      "ParameterValue":"CSYE6225CodeDeployApplication",
       "UsePreviousValue":true
    },
    {  
@@ -41,7 +41,12 @@
    },
    {  
       "ParameterKey":"AWSACCOUNTNUMBER",
-      "ParameterValue":"515649345368",
+      "ParameterValue":"577654183513",
+      "UsePreviousValue":true
+   },
+   {  
+      "ParameterKey":"TravisUsername",
+      "ParameterValue":"travis",
       "UsePreviousValue":true
    }
 ]

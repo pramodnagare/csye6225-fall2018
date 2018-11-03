@@ -1,9 +1,9 @@
 version: 0.0
 os: linux
 
-files:
-  - source: ./webapplication/target/demo-0.0.1-SNAPSHOT.war
-    destination: /opt/tomcat/
+files:             
+  - source: ./WebApp/build/libs/ROOT.war
+    destination: /opt/tomcat/webapps
 
 hooks:
   AfterInstall:
@@ -12,9 +12,5 @@ hooks:
      runas: centos
   ApplicationStart:
    - location: ./applicationStart.sh
-     timeout: 300
+     timeout: 180
      runas: centos
-  #ValidateService:
-   #- location: ./validateService.sh
-    # timeout: 180
-#runas: centos

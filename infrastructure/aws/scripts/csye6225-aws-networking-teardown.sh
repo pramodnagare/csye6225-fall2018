@@ -19,4 +19,3 @@ echo "Finally deleting VPC"
 aws ec2 delete-vpc --vpc-id ${vpcid}
 
 #
-
