@@ -50,7 +50,7 @@ public class S3AttachmentService {
     private String clientRegion = "us-east-1";
 
     //S3 Bucket name
-    private String bucketName = "csye6225-fall2018-shahharsh3.me.csye6225.com";
+    private String bucketName = "";
 
     public List<Attachments> getAllAttachments(String auth, String transcation_id) {
 
