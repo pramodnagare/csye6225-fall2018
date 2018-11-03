@@ -1,12 +1,12 @@
 [  
    {  
       "ParameterKey":"CDbucket",
-      "ParameterValue":"code-deploy.csye6225-fall2018-nagarep.me",
+      "ParameterValue":"code-deploy.csye6225-fall2018-vuggem.me",
       "UsePreviousValue":true
    },
    {  
       "ParameterKey":"WBbucket",
-      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
+      "ParameterValue":"csye6225-fall2018-vuggem.me.csye6225.com",
       "UsePreviousValue":true
    },
    {  
@@ -41,7 +41,7 @@
    },
    {  
       "ParameterKey":"AWSACCOUNTNUMBER",
-      "ParameterValue":"577654183513",
+      "ParameterValue":"709737330356",
       "UsePreviousValue":true
    },
    {  
