@@ -1,12 +1,12 @@
 [  
    {  
       "ParameterKey":"CDbucket",
-      "ParameterValue":"code-deploy.csye6225-fall2018-nagarep.me",
+      "ParameterValue":"code-deploy.csye6225-fall2018-shahharsh3.me",
       "UsePreviousValue":true
    },
    {  
       "ParameterKey":"WBbucket",
-      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
+      "ParameterValue":"csye6225-fall2018-shahharsh3.me.csye6225.com",
       "UsePreviousValue":true
    },
    {  
