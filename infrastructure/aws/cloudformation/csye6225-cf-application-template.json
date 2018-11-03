@@ -343,8 +343,10 @@
                         "yum install ruby ntp wget java-1.8.0-openjdk-devel -y",
                         "systemctl start ntpd",
                         "systemctl enable ntpd",
-                        "groupadd tomcat",
                         "sudo -s",
+                        "yum install ruby -y",
+                        "yum install wget -y",
+                        "yum install python -y",
                         "echo '#!/bin/bash' >> env.sh",
                         {  
                            "Fn::Join":[  
@@ -359,21 +361,6 @@
                                              "Ref":"DBUSERNAME"
                                           }
                                        ]
-                                    ]
-                                 },
-                                 " >> env.sh \n"
-                              ]
-                           ]
-                        },
-                        {  
-                           "Fn::Join":[  
-                              "",
-                              [  
-                                 "echo 'export DBHOST='",
-                                 {  
-                                    "Fn::GetAtt":[  
-                                       "RDSInstance",
-                                       "Endpoint.Address"
                                     ]
                                  },
                                  " >> env.sh \n"
@@ -437,17 +424,23 @@
                               ]
                            ]
                         },
+                        "groupadd tomcat",
                         "useradd -M -s /bin/nologin -g tomcat -d /opt/tomcat tomcat",
                         "cd /tmp",
                         "wget http://apache.mirrors.pair.com/tomcat/tomcat-8/v8.5.34/bin/apache-tomcat-8.5.34.tar.gz",
                         "mkdir /opt/tomcat",
-                        "tar xvf apache-tomcat-8*tar.gz -C /opt/tomcat --strip-components=1",
+                        "sudo tar xvf apache-tomcat-8*tar.gz -C /opt/tomcat --strip-components=1",
                         "cd /opt/tomcat",
                         "chgrp -R tomcat /opt/tomcat",
                         "chmod -R g+r conf",
                         "chmod g+x conf",
                         "chown -R tomcat webapps/ work/ temp/ logs/",
-                        "cd /usr/lib/systemd/system",
+                        "cd /opt && sudo chown -R tomcat tomcat/",
+                        "#cd /usr/lib/systemd/system",
+                        "cd /opt/tomcat",
+                        "mkdir uploads",
+                        "chmod o+rwx uploads/",
+                        "cd /etc/systemd/system",
                         "touch tomcat.service",
                         "echo '[Unit]' > tomcat.service",
                         "echo 'Description=Apache Tomcat Web Application Container' >> tomcat.service",
@@ -470,6 +463,49 @@
                         "echo '[Install]' >> tomcat.service",
                         "echo 'WantedBy=multi-user.target' >> tomcat.service",
                         "systemctl daemon-reload",
+                        "cd /opt/tomcat/bin",
+                        "touch setenv.sh",
+                        "echo 'JAVA_OPTS=\"-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true\"' >> setenv.sh",
+                        "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.profiles.active=Dev\"' >> setenv.sh",
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://",
+                                 {  
+                                    "Fn::GetAtt":[  
+                                       "RDSInstance",
+                                       "Endpoint.Address"
+                                    ]
+                                 },
+                                 ":3306/csye6225\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=",
+                                 {  
+                                    "Ref":"DBUSERNAME"
+                                 },
+                                 "\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=",
+                                 {  
+                                    "Ref":"DBPASSWORD"
+                                 },
+                                 "\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
                         "#systemctl start cloudwatch.service",
                         "#systemctl enable cloudwatch.service",
                         "systemctl enable tomcat.service",
@@ -477,13 +513,12 @@
                         "wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm",
                         "sudo rpm -ivh mysql-community-release-el7-5.noarch.rpm",
                         "sudo yum install mysql-server -y",
-                        "sudo systemctl start mysqld",
-			"sudo yum install unzip -y \n",
-			"sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
-			"sudo chmod +x ./install \n",
-			"sudo ./install auto \n",
-			"sudo source /env.sh",
-			"sudo service codedeploy-agent start \n"
+                        "sudo yum install unzip -y \n",
+                        "sudo wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install \n",
+                        "sudo chmod +x ./install \n",
+                        "sudo ./install auto \n",
+                        "sudo source /env.sh",
+                        "sudo service codedeploy-agent start \n"
                      ]
                   ]
                }
