@@ -331,7 +331,7 @@ public class S3Controllers {
 
 						ObjectMapper mapper = new ObjectMapper();
 						List<UserTransaction> li = userTransactionRepository.findIdByUserId(user_id);
-						List<String> myTranscation = new ArrayList<>();
+						List<String> myTranscation = new ArrayList<String>();
 						JSONObject bodyObject = new JSONObject("{}");
 						for (UserTransaction t : li) {
 							bodyObject.put("description", t.getDescription());
