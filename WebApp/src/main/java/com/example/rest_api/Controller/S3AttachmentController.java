@@ -421,7 +421,7 @@ public class S3Controllers {
 	
 	
 	String clientRegion = "us-east-1";
-	String bucketName = "bucketassignmet4";
+	String bucketName = "csye6225-fall2018-shahharsh3.me.csye6225.com";
 	// String fileObjKeyName = "firstattempt";
 	// String fileName = "C:\\upload";
 
@@ -573,7 +573,7 @@ public class S3Controllers {
 							// new changes//
 							ObjectMapper mapper = new ObjectMapper();
 							List<Attachments> li = attachmentTransactionRepository.findIdByu(opt_id);
-							List<String> myTranscation = new ArrayList<>();
+							List<String> myTranscation = new ArrayList<String>();
 							JSONObject bodyObject = new JSONObject("{}");
 							for (Attachments t : li) {
 								bodyObject.put("url", t.getUrl());
