@@ -1,7 +1,6 @@
-package com.example.rest_api.Entities;
+package com.example.webapp.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;

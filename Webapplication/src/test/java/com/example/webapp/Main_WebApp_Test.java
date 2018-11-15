@@ -1,4 +1,4 @@
-package com.example.rest_api;
+package com.example.webapp;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONException;
@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.nio.charset.Charset;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestApiApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RestApiApplicationTests {
+@SpringBootTest(classes = Main_WebApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class Main_WebApp_Test {
 
     @LocalServerPort
     private int port;

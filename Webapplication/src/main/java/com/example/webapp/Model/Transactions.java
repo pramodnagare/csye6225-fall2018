@@ -1,19 +1,17 @@
-package com.example.rest_api.Entities;
+package com.example.webapp.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table
 public class Transactions {
 
     @Id
-    private String transaction_id;
+    private String id;
     private String description;
     private String merchant;
     private String amount;
@@ -25,15 +23,14 @@ public class Transactions {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "transactions")
-    @JsonIgnore
     private List<Attachments> attachmentsList;
 
     public Transactions() {
         attachmentsList = new ArrayList<Attachments>();
     }
 
-    public Transactions(String transaction_id, String description, String merchant, String amount, String date, String category) {
-        this.transaction_id = transaction_id;
+    public Transactions(String id, String description, String merchant, String amount, String date, String category) {
+        this.id = id;
         this.description = description;
         this.merchant = merchant;
         this.amount = amount;
@@ -43,12 +40,12 @@ public class Transactions {
 
     }
 
-    public String getTransaction_id() {
-        return transaction_id;
+    public String getId() {
+        return id;
     }
 
-    public void setTransaction_id(String transaction_id) {
-        this.transaction_id = transaction_id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -103,45 +100,18 @@ public class Transactions {
         return attachmentsList;
     }
 
-    public Attachments addAttachment(Attachments newAttachments){
+    public Attachments createAttachment(Attachments attachment){
         try{
-            attachmentsList.add(newAttachments);
-            return newAttachments;
+            attachmentsList.add(attachment);
+            return attachment;
         }catch(Exception e){
             return null;
         }
     }
 
-//    public Attachments getAttachment(String previousAttachmentId){
-//        Iterator it = attachmentsList.iterator();
-//        while(it.hasNext()){
-//            Attachments attachments = (Attachments) it.next();
-//            if(attachments.getId().equals(previousAttachmentId)){
-//                return attachments;
-//            }
-//        }
-//        return null;
-//    }
-
-    public boolean deleteAttachment(Attachments deleteAttachment){
-        try{
-            attachmentsList.remove(deleteAttachment);
+    public boolean removeAttachment(Attachments attachment){
+            attachmentsList.remove(attachment);
             return true;
-        }catch (Exception e){
-            return false;
-        }
     }
 
-//    public Attachments getPreviousAttachment(String previousAttachmentId){
-//
-//        Iterator it = attachmentsList.iterator();
-//        while(it.hasNext()){
-//            Attachments attachments = (Attachments) it.next();
-//            if(attachments.getId().equals(previousAttachmentId)){
-//                return attachments;
-//            }
-//        }
-//
-//        return null;
-//    }
 }

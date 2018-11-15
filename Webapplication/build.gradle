@@ -7,7 +7,7 @@ war{archiveName = 'ROOT.war'}
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
-description = """rest_api"""
+description = """webapp"""
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
