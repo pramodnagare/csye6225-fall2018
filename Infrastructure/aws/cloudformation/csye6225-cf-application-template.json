@@ -249,6 +249,38 @@
             }
          }
       },
+      "myDynamoDBTable":{  
+         "Type":"AWS::DynamoDB::Table",
+         "Properties":{  
+            "AttributeDefinitions":[  
+               {  
+                  "AttributeName":"email",
+                  "AttributeType":"S"
+               },
+               {
+                  "AttributeName":"token",
+                  "AttributeType":"S"
+               }
+            ],
+            "KeySchema":[  
+               {  
+                  "AttributeName":"token",
+                  "KeyType":"HASH"
+               }
+            ],
+            "ProvisionedThroughput":{  
+               "ReadCapacityUnits":"5",
+               "WriteCapacityUnits":"5"
+            },
+            "TableName":"csye6225",
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":"myDynamoDB"
+               }
+            ]
+         }
+      },
       "SecurityGroupDB":{  
          "Type":"AWS::EC2::SecurityGroup",
          "Properties":{  
@@ -518,7 +550,9 @@
                         "sudo chmod +x ./install \n",
                         "sudo ./install auto \n",
                         "sudo source /env.sh",
-                        "sudo service codedeploy-agent start \n"
+                        "sudo service codedeploy-agent start \n",
+                        "wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm",
+                        
                      ]
                   ]
                }
