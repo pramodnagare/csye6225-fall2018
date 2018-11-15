@@ -8,7 +8,7 @@ install: true
 
 script:
   - pwd
-  - cd WebApp
+  - cd Webapplication
   - chmod +x gradlew 
   - ./gradlew war
   - cd build/libs
@@ -21,9 +21,9 @@ after_success:
   - pwd
   - ls -al
   - mkdir codedeploy_artifact
-  - cp infrastructure/aws/codedeploy/*.sh .
-  - cp infrastructure/aws/codedeploy/*.yml .
-  - zip -r csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip WebApp/build/libs/ROOT.war *.sh *.yml
+  - cp Infrastructure/aws/codedeploy/*.sh .
+  - cp Infrastructure/aws/codedeploy/*.yml .
+  - zip -r csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip Webapplication/build/libs/ROOT.war *.sh *.yml
   - ls -al
   - mv csye6225-web-app-${TRAVIS_JOB_NUMBER}.zip codedeploy_artifact/
   - ls -al
