@@ -551,7 +551,7 @@
                         "sudo ./install auto \n",
                         "sudo source /env.sh",
                         "sudo service codedeploy-agent start \n",
-                        "wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm",
+                        "wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm"
                         
                      ]
                   ]
