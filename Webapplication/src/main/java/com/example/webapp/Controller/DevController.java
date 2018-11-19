@@ -78,11 +78,11 @@ public class DevController {
 
         AmazonSNS amazonsns = getsns();
         System.out.println(amazonsns.toString());
-        String userName = "harshshah1993@gmail.com";
+        String userName = "vugge.m@husky.neu.edu";
         String table = "csye6225";
         String ec2= "ec2-100-26-23-18.compute-1.amazonaws.com";
         String msg = userName+"|"+userName+"|"+table+"|"+ec2;
-        PublishRequest publicRequest = new PublishRequest("arn:aws:sns:us-east-1:577654183513:password_reset",msg);
+        PublishRequest publicRequest = new PublishRequest("arn:aws:sns:us-east-1:709737330356:password_reset",msg);
         PublishResult publishResult  = amazonsns.publish(publicRequest);
         System.out.println(publishResult.getMessageId());
         return null;
