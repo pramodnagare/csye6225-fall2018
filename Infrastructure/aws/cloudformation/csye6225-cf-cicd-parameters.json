@@ -1,12 +1,7 @@
 [  
    {  
-      "ParameterKey":"CDbucket",
-      "ParameterValue":"code-deploy.csye6225-fall2018-nagarep.me",
-      "UsePreviousValue":true
-   },
-   {  
-      "ParameterKey":"WBbucket",
-      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
+      "ParameterKey":"domainName",
+      "ParameterValue":"csye6225-fall2018-nagarep.me",
       "UsePreviousValue":true
    },
    {  

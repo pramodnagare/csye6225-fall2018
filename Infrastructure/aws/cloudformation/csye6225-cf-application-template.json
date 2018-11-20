@@ -124,8 +124,8 @@
          "Description":"DBname",
          "Type":"String"
       },
-      "S3BUCKETNAME":{  
-         "Description":"S3 Bucket name for web application",
+      "domainName":{  
+         "Description":"Domain name",
          "Type":"String"
       },
       "DBUSERNAME":{  
@@ -170,6 +170,14 @@
       },
       "KeyName":{  
          "Description":"Key Name for EC2 Instance",
+         "Type":"String"
+      },
+      "emailHost":{  
+         "Description":"email ID for the host",
+         "Type":"String"
+      },
+      "dynamoDBName":{  
+         "Description":"Dynamo DB name",
          "Type":"String"
       }
    },
@@ -252,19 +260,18 @@
       "myDynamoDBTable":{  
          "Type":"AWS::DynamoDB::Table",
          "Properties":{  
+            "TableName":{  
+               "Ref":"dynamoDBName"
+            },
             "AttributeDefinitions":[  
                {  
-                  "AttributeName":"email",
-                  "AttributeType":"S"
-               },
-               {
-                  "AttributeName":"token",
+                  "AttributeName":"id",
                   "AttributeType":"S"
                }
             ],
             "KeySchema":[  
                {  
-                  "AttributeName":"token",
+                  "AttributeName":"id",
                   "KeyType":"HASH"
                }
             ],
@@ -272,11 +279,14 @@
                "ReadCapacityUnits":"5",
                "WriteCapacityUnits":"5"
             },
-            "TableName":"csye6225",
+            "TimeToLiveSpecification":{  
+               "AttributeName":"ttl",
+               "Enabled":"true"
+            },
             "Tags":[  
                {  
                   "Key":"Name",
-                  "Value":"myDynamoDB"
+                  "Value":"csye6225_DynamoDB"
                }
             ]
          }
@@ -409,8 +419,9 @@
                                        "",
                                        [  
                                           {  
-                                             "Ref":"S3BUCKETNAME"
-                                          }
+                                             "Ref":"domainName"
+                                          },
+                                          ".csye6225.com"
                                        ]
                                     ]
                                  },
@@ -538,6 +549,42 @@
                               ]
                            ]
                         },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -DdynamoDB=",
+                                 {  
+                                    "Ref":"dynamoDBName"
+                                 },
+                                 "\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -DemailHost=",
+                                 {  
+                                    "Ref":"emailHost"
+                                 },
+                                 "\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "echo 'JAVA_OPTS=\"$JAVA_OPTS -DtopicARN=",
+                                 {  
+                                    "Fn::ImportValue":"snsTopicARN"
+                                 },
+                                 "\"' >> setenv.sh \n"
+                              ]
+                           ]
+                        },
                         "#systemctl start cloudwatch.service",
                         "#systemctl enable cloudwatch.service",
                         "systemctl enable tomcat.service",
@@ -551,8 +598,34 @@
                         "sudo ./install auto \n",
                         "sudo source /env.sh",
                         "sudo service codedeploy-agent start \n",
-                        "wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm"
-                        
+                        "sudo echo [general] > /var/awslogs.conf \n",
+                        "sudo echo state_file = /var/awslogs/state/agent-state >> /var/awslogs.conf \n",
+                        "sudo echo [/var/log/messages] >> /var/awslogs.conf \n",
+                        "sudo echo file = /var/log/customlog.log >> /var/awslogs.conf \n",
+                        "sudo echo log_group_name = /var/log/syslog >> /var/awslogs.conf \n",
+                        "sudo echo log_stream_name = teststream >> /var/awslogs.conf \n",
+                        "sudo echo datetime_format = %b %d %H:%M:%S >> /var/awslogs.conf \n",
+                        "sudo wget https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py \n",
+                        "sudo python awslogs-agent-setup.py -n -r us-east-1 -c /var/awslogs.conf\n",
+                        "sudo echo [Unit] > /var/awslogs.service \n",
+                        "sudo echo Description=The CloudWatch Logs agent >> /var/awslogs.service \n",
+                        "sudo echo After=rc-local.service >> /var/awslogs.service \n",
+                        "sudo echo [Service] >> /var/awslogs.service \n",
+                        "sudo echo Type=simple >> /var/awslogs.service \n",
+                        "sudo echo Restart=always >> /var/awslogs.service \n",
+                        "sudo echo KillMode=process >> /var/awslogs.service \n",
+                        "sudo echo TimeoutSec=infinity >> /var/awslogs.service \n",
+                        "sudo echo PIDFILE=/var/awslogs/state/awslogs.pid >> /var/awslogs.service \n",
+                        "sudo echo ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile '$PIDFILE' --user awslogs chuid awslogs '&' >> /var/awslogs.service \n",
+                        "sudo echo [Install] >> /var/awslogs.service \n",
+                        "sudo echo WantedBy=multi-user.target >> /var/awslogs.service \n",
+                        "sudo mv /var/awslogs.service /etc/systemd/system \n",
+                        "sudo echo --Custom Log File-- > /var/log/customlog.log \n",
+                        "sudo chmod 777 /var/log/customlog.log \n",
+                        "sudo systemctl enable awslogs.service \n",
+                        "sudo systemctl start awslogs.service \n"
+                        "systemctl enable tomcat.service",
+                        "systemctl start tomcat.service"
                      ]
                   ]
                }
@@ -587,7 +660,15 @@
          "Type":"AWS::S3::Bucket",
          "Properties":{  
             "BucketName":{  
-               "Ref":"S3BUCKETNAME"
+               "Fn::Join":[  
+                  "",
+                  [  
+                     {  
+                        "Ref":"domainName"
+                     },
+                     ".csye6225.com"
+                  ]
+               ]
             }
          }
       },

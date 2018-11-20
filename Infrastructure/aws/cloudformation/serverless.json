@@ -2,7 +2,6 @@
    "AWSTemplateFormatVersion":"2010-09-09",
    "Description":"AWS CloudFormation to set up a custom CloudFormation resource with Lambda, and then call it in the same template.",
    "Parameters":{  
-   
       "HandlerName":{  
          "Description":"The name of the lambda handler",
          "Type":"String",
@@ -11,23 +10,24 @@
       "ModuleName":{  
          "Description":"The name of the JavaScript file",
          "Type":"String",
-         "Default":"customresource"
+         "Default":"index"
       },
       "S3Bucket":{  
          "Description":"The name of the bucket that contains your packaged source",
          "Type":"String",
-         "Default":"lambdabuck"
+         "Default":"code-deploy.csye6225-fall2018-nagarep.me"
       },
       "S3Key":{  
          "Description":"The name of the ZIP package",
          "Type":"String",
-         "Default":"lambda.zip"
+         "Default":"lambda_function.zip"
       }
    },
    "Resources":{  
       "LambdaFunction":{  
          "Type":"AWS::Lambda::Function",
-         "Properties":{  
+         "Properties":{ 
+	    "FunctionName":"travis_lambda", 
             "Code":{  
                "S3Bucket":{  
                   "Ref":"S3Bucket"
@@ -56,7 +56,7 @@
                   "Arn"
                ]
             },
-            "Runtime":"java8",
+            "Runtime":"nodejs8.10",
             "Timeout":"30",
             "TracingConfig":{  
                "Mode":"Active"
@@ -109,10 +109,12 @@
                               "*"
                            ]
                         },
-                        {
-                           "Effect": "Allow",
-                           "Action":["xray:PutTraceSegments"], 
-                           "Resource": "*"
+                        {  
+                           "Effect":"Allow",
+                           "Action":[  
+                              "xray:PutTraceSegments"
+                           ],
+                           "Resource":"*"
                         }
                      ]
                   }
@@ -120,44 +122,55 @@
             ]
          }
       },
-      "LambdaResourcePolicy": {
-         "Type": "AWS::Lambda::Permission",
-         "Properties": {
-           "FunctionName" : { "Ref" : "LambdaFunction" },
-           "Principal": "sns.amazonaws.com",
-           "Action": "lambda:InvokeFunction",
-           "SourceArn" : { "Ref" : "snsTopic" }
+      "LambdaInvokePermission":{  
+         "Type":"AWS::Lambda::Permission",
+         "Properties":{  
+            "Action":"lambda:InvokeFunction",
+            "Principal":"sns.amazonaws.com",
+            "SourceArn":{  
+               "Ref":"snsTopic"
+            },
+            "FunctionName":{  
+               "Fn::GetAtt":[  
+                  "LambdaFunction",
+                  "Arn"
+               ]
+            }
          }
-       },
-       "lambdaExecutionPolicy":{
-         "Type": "AWS::IAM::ManagedPolicy",
-         "Properties": {
-             "ManagedPolicyName": "LambdaExecutionPolicy",
-             "PolicyDocument": {
-                 "Version" : "2012-10-17",
-                 "Statement": [ {
-                     "Effect": "Allow",
-                     "Action": "logs:CreateLogGroup",
-                     "Resource": "arn:aws:logs:us-east-1:*"
-                 },
-                 {
-                    "Effect": "Allow",
-                    "Action": ["logs:CreateLogStream",
-                                    "logs:PutLogEvents"],
-                         "Resource": "arn:aws:logs:us-east-1::log-group:/aws/lambda/LambdaFunction:"
-                     }
-                     ]
-                 }
-                             
-             },
+      },
       "snsTopic":{  
          "Type":"AWS::SNS::Topic",
-         "DependsOn":"LambdaFunction",
          "Properties":{  
             "DisplayName":"password_reset",
-            "TopicName":"password_reset",
-            "Subscription":[{"Endpoint":{"Fn:GetAtt":["LambdaFunction","Arn"]},"Protocol":"lambda"}]
+            "TopicName":"password_reset"
+         }
+      },
+      "Subscription":{  
+         "Type":"AWS::SNS::Subscription",
+         "Properties":{  
+            "Endpoint":{  
+               "Fn::GetAtt":[  
+                  "LambdaFunction",
+                  "Arn"
+               ]
+            },
+            "Protocol":"lambda",
+            "Region":"us-east-1",
+            "TopicArn":{  
+               "Ref":"snsTopic"
+            }
          }
       }
-   }
+   },
+	"Outputs": {
+		"SNSTopic": {
+		  "Description": "The ARN of the SNS topic",
+		  "Export": {
+			"Name": "snsTopicARN"
+		  },
+		  "Value": {
+			"Ref":"snsTopic"
+		  }
+		}
+  }
 }

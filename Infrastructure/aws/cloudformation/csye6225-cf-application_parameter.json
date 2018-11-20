@@ -312,9 +312,9 @@
 
    {  
 
-      "ParameterKey":"S3BUCKETNAME",
+      "ParameterKey":"domainName",
 
-      "ParameterValue":"csye6225-fall2018-nagarep.me.csye6225.com",
+      "ParameterValue":"csye6225-fall2018-nagarep.me",
 
       "UsePreviousValue":true
 
@@ -424,6 +424,24 @@
       "ParameterKey":"KeyName",
 
       "ParameterValue":"appec2",
+
+      "UsePreviousValue":true
+
+   },
+   {  
+
+      "ParameterKey":"dynamoDBName",
+
+      "ParameterValue":"csye6225",
+
+      "UsePreviousValue":true
+
+   },
+   {  
+
+      "ParameterKey":"emailHost",
+
+      "ParameterValue":"nagare.p@husky.neu.edu",
 
       "UsePreviousValue":true
 

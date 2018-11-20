@@ -3,14 +3,19 @@ import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.sns.model.PublishRequest;
-import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.util.EC2MetadataUtils;
 import com.example.webapp.Model.Attachments;
 import com.example.webapp.Model.Transactions;
 import com.example.webapp.Model.User;
@@ -22,7 +27,9 @@ import com.amazonaws.services.sns.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.*;
 //import java.util.Optional;
 
@@ -36,7 +43,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 
 @RestController
@@ -56,36 +62,69 @@ public class DevController {
 
     private String bucketName = "";
 
-    public AmazonSNS getsns(){
+    public AWSCredentialsProviderChain getchain(){
         AWSCredentialsProviderChain chain  = new AWSCredentialsProviderChain(
                 InstanceProfileCredentialsProvider.getInstance(),new ProfileCredentialsProvider()
         );
-        return AmazonSNSClientBuilder.standard().withCredentials(chain).build();
+        return chain;
     }
 
 
+
+
     @GetMapping(value="/password_reset")
-    public Message getResetPassword(@RequestHeader(value="Authorization")String auth){
+    public ResponseEntity<?> getResetPassword(@RequestHeader(value="Authorization")String auth) throws UnknownHostException {
 
-// AmazonSNS sns = getsns();
-//
-// String userName = "harshshah1993@gmail.com";
-// String table = "csye6225";
-// String ec2= "ec2-100-26-23-18.compute-1.amazonaws.com";
-// String msg = userName+"|"+userName+"|"+table+"|"+ec2;
-// sns.publish("password_reset",msg);
-//System.out.print("reached end");
+        if(auth.isEmpty()){
 
-        AmazonSNS amazonsns = getsns();
-        System.out.println(amazonsns.toString());
-        String userName = "harshshah1993@gmail.com";
-        String table = "csye6225";
-        String ec2= "ec2-100-26-23-18.compute-1.amazonaws.com";
-        String msg = userName+"|"+userName+"|"+table+"|"+ec2;
-        PublishRequest publicRequest = new PublishRequest("arn:aws:sns:us-east-1:577654183513:password_reset",msg);
-        PublishResult publishResult  = amazonsns.publish(publicRequest);
-        System.out.println(publishResult.getMessageId());
-        return null;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
+
+        }
+
+        String []creds = devGetcreds(auth);
+
+        if(creds.length == 0){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
+
+        }
+
+        String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
+
+        if(!creds[0].matches(regex)) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
+
+        }
+
+
+        try {
+            if(devAuthUser(creds)){
+
+                AmazonSNS sns = AmazonSNSClientBuilder.standard().withCredentials(getchain()).build();
+
+                String userName = creds[0];
+                String table = System.getProperty("dynamoDB");
+                System.out.println("DynamoDB table:"+ table);
+                InetAddress myHost = InetAddress.getLocalHost();
+                String ec2= myHost.getHostAddress();
+                System.out.println("ec2:"+ec2);
+                String emailHost = System.getProperty("emailHost");
+                System.out.println("emailHost:"+emailHost);
+                String msg = userName+"|"+emailHost+"|"+table+"|"+ec2;
+                System.out.println("msg:"+msg);
+                String topicARN = System.getProperty("topicARN");
+                System.out.println(topicARN);
+                sns.publish(topicARN,msg);
+
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Response: Email for password reset has been sent!");
+
+            }
+        }catch(NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
 
 
     }
@@ -114,15 +153,15 @@ public class DevController {
     public ResponseEntity<?> createTransaction(@RequestHeader(value="Authorization")String auth, @RequestBody Transactions t){
 
         if(auth.isEmpty()){
-        
+
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
-        	
+
         }
 
         if(t == null){
-        	
+
         	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction body!");
-        	
+
         }
 
         String[] creds = devGetcreds(auth);
