@@ -44,7 +44,7 @@
                   "ToPort":"80",
                   "IpProtocol":"TCP"
                },
-	       {  
+               {  
                   "CidrIp":"0.0.0.0/0",
                   "Description":"To allow world for port 443",
                   "FromPort":"443",
@@ -573,14 +573,13 @@
          "Type":"AWS::Route53::RecordSet",
          "Properties":{  
             "HostedZoneId":{  
-              "Ref":"hzid"
+               "Ref":"hzid"
             },
             "Name":{  
                "Fn::Join":[  
                   "",
                   [  
-                     "www.",
-		     {  
+                     {  
                         "Ref":"hostedzone"
                      },
                      "."
@@ -602,6 +601,79 @@
                }
             },
             "Type":"A"
+         }
+      },
+      "CodeDeployApplication":{  
+         "Type":"AWS::CodeDeploy::Application",
+         "Properties":{  
+            "ApplicationName":"CSYE6225CodeDeployApplication"
+         }
+      },
+      "CodeDeployServiceRole":{  
+         "Type":"AWS::IAM::Role",
+         "Properties":{  
+            "RoleName":"CodeDeployServiceRole",
+            "AssumeRolePolicyDocument":{  
+               "Version":"2012-10-17",
+               "Statement":[  
+                  {  
+                     "Effect":"Allow",
+                     "Principal":{  
+                        "Service":"codedeploy.amazonaws.com"
+                     },
+                     "Action":[  
+                        "sts:AssumeRole"
+                     ]
+                  }
+               ]
+            },
+            "ManagedPolicyArns":[  
+               "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+            ],
+            "Path":"/"
+         }
+      },
+      "DeploymentGroup":{  
+         "Type":"AWS::CodeDeploy::DeploymentGroup",
+         "Properties":{  
+            "ApplicationName":{  
+               "Ref":"CodeDeployApplication"
+            },
+            "AutoScalingGroups":[  
+               {  
+                  "Ref":"WebServerGroup"
+               }
+            ],
+            "DeploymentGroupName":"Codedeploy_groupname",
+            "DeploymentStyle":{  
+               "DeploymentType":"IN_PLACE",
+               "DeploymentOption":"WITHOUT_TRAFFIC_CONTROL"
+            },
+            "Ec2TagFilters":[  
+               {  
+                  "Key":"Name",
+                  "Type":"KEY_AND_VALUE",
+                  "Value":"EC2Webapplication"
+               }
+            ],
+            "LoadBalancerInfo":{  
+               "TargetGroupInfoList":[  
+                  {  
+                     "Name":{  
+                        "Fn::GetAtt":[  
+                           "LoadBalancerTarget",
+                           "TargetGroupName"
+                        ]
+                     }
+                  }
+               ]
+            },
+            "ServiceRoleArn":{  
+               "Fn::GetAtt":[  
+                  "CodeDeployServiceRole",
+                  "Arn"
+               ]
+            }
          }
       }
    }
