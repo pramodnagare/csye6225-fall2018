@@ -20,6 +20,14 @@
       "dynamoDBName":{  
          "Description":"Dynamo DB name",
          "Type":"String"
+      },
+      "certARN":{  
+         "Description":" SSL certificate ARN",
+         "Type":"String"
+      },
+      "hzid":{  
+         "Description":" Hosted zone ID",
+         "Type":"String"
       }
    },
    "Resources":{  
@@ -38,6 +46,13 @@
                },
                {  
                   "CidrIp":"0.0.0.0/0",
+                  "Description":"To allow world for port 443",
+                  "FromPort":"443",
+                  "ToPort":"443",
+                  "IpProtocol":"TCP"
+               },
+               {  
+                  "CidrIp":"0.0.0.0/0",
                   "Description":"To allow world for port 22",
                   "FromPort":"22",
                   "ToPort":"22",
@@ -45,7 +60,7 @@
                },
                {  
                   "CidrIp":"0.0.0.0/0",
-                  "Description":"To allow world for port 443",
+                  "Description":"To allow world for port 8080",
                   "FromPort":"8080",
                   "ToPort":"8080",
                   "IpProtocol":"TCP"
@@ -123,34 +138,81 @@
             }
          }
       },
-      "EC2Instance":{  
-         "Type":"AWS::EC2::Instance",
+      "NewVolume":{  
+         "Type":"AWS::EC2::Volume",
          "Properties":{  
-            "DisableApiTermination":"false",
-            "ImageId":"ami-9887c6e7",
-            "InstanceType":"t2.micro",
+            "Size":"20",
+            "VolumeType":"gp2",
             "AvailabilityZone":"us-east-1a",
-            "SubnetId":{  
-               "Fn::ImportValue":"CFMainPublicSubnet"
-            },
-            "KeyName":"appec2",
-            "SecurityGroupIds":[  
-               {  
-                  "Ref":"SecurityGroupWB"
-               }
-            ],
-            "Volumes":[  
-               {  
-                  "Device":"/dev/sda2",
-                  "VolumeId":{  
-                     "Ref":"NewVolume"
-                  }
-               }
-            ],
             "Tags":[  
                {  
                   "Key":"Name",
-                  "Value":"EC2Webapplication"
+                  "Value":"EC2AppVolume"
+               }
+            ]
+         }
+      },
+      "S3bucket":{  
+         "Type":"AWS::S3::Bucket",
+         "Properties":{  
+            "BucketName":{  
+               "Fn::Join":[  
+                  "",
+                  [  
+                     {  
+                        "Ref":"hostedzone"
+                     },
+                     ".csye6225.com"
+                  ]
+               ]
+            }
+         }
+      },
+      "RDSInstance":{  
+         "Type":"AWS::RDS::DBInstance",
+         "Properties":{  
+            "DBName":{  
+               "Ref":"DBSCHEMA"
+            },
+            "AllocatedStorage":"5",
+            "DBInstanceClass":"db.t2.medium",
+            "Engine":"mysql",
+            "EngineVersion":"5.6.37",
+            "MasterUsername":{  
+               "Ref":"DBUSERNAME"
+            },
+            "MasterUserPassword":{  
+               "Ref":"DBPASSWORD"
+            },
+            "MultiAZ":"false",
+            "VPCSecurityGroups":[  
+               {  
+                  "Ref":"SecurityGroupDB"
+               }
+            ],
+            "PubliclyAccessible":"false",
+            "DBInstanceIdentifier":"DBInstanceID",
+            "DBSubnetGroupName":{  
+               "Fn::ImportValue":"CFDBPrivateSubnets"
+            },
+            "Tags":[  
+               {  
+                  "Key":"Name",
+                  "Value":"MySQLDatabase"
+               }
+            ]
+         }
+      },
+      "AutoScaledEc2Instance":{  
+         "Type":"AWS::AutoScaling::LaunchConfiguration",
+         "Properties":{  
+            "IamInstanceProfile":"ec2instanceprofile",
+            "ImageId":"ami-9887c6e7",
+            "InstanceType":"t2.micro",
+            "KeyName":"appec2",
+            "SecurityGroups":[  
+               {  
+                  "Ref":"SecurityGroupWB"
                }
             ],
             "UserData":{  
@@ -300,95 +362,318 @@
                         "echo '\"metrics\":{' >> cloudwatch-config.json",
                         "echo '\"metrics_collected\":{' >> cloudwatch-config.json",
                         "echo '\"statsd\":{' >> cloudwatch-config.json",
-						"echo '\"service_address\":\":8125\", \"metrics_collection_interval\":10, \"metrics_aggregation_interval\":0 }}}}' >> cloudwatch-config.json",
-						"wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm",
-						"rpm -U ./amazon-cloudwatch-agent.rpm",
-						"/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s",
-						"cd /",
-						"wget https://s3.amazonaws.com/configfileforcloudwatch/amazon-cloudwatch-agent.service",
-						"cp amazon-cloudwatch-agent.service /usr/lib/systemd/system/",
-						"systemctl enable amazon-cloudwatch-agent.service",
-						"systemctl start amazon-cloudwatch-agent.service",
-						"systemctl daemon-reload",
-						"systemctl enable amazon-cloudwatch-agent.service",
-						"systemctl start amazon-cloudwatch-agent.service",
-						"systemctl enable tomcat.service",
-						"systemctl start tomcat.service",
-						"wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm",
-						"rpm -ivh mysql-community-release-el7-5.noarch.rpm",
-						"yum install mysql-server -y",
-						"yum install unzip -y \n"
+                        "echo '\"service_address\":\":8125\", \"metrics_collection_interval\":10, \"metrics_aggregation_interval\":0 }}}}' >> cloudwatch-config.json",
+                        "wget https://s3.amazonaws.com/amazoncloudwatch-agent/centos/amd64/latest/amazon-cloudwatch-agent.rpm",
+                        "rpm -U ./amazon-cloudwatch-agent.rpm",
+                        "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s",
+                        "cd /",
+                        "wget https://s3.amazonaws.com/configfileforcloudwatch/amazon-cloudwatch-agent.service",
+                        "cp amazon-cloudwatch-agent.service /usr/lib/systemd/system/",
+                        "systemctl enable amazon-cloudwatch-agent.service",
+                        "systemctl start amazon-cloudwatch-agent.service",
+                        "systemctl daemon-reload",
+                        "systemctl enable amazon-cloudwatch-agent.service",
+                        "systemctl start amazon-cloudwatch-agent.service",
+                        "systemctl enable tomcat.service",
+                        "systemctl start tomcat.service",
+                        "wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm",
+                        "rpm -ivh mysql-community-release-el7-5.noarch.rpm",
+                        "yum install mysql-server -y",
+                        "yum install unzip -y \n"
                      ]
                   ]
                }
-            },
-            "IamInstanceProfile":"ec2instanceprofile"
+            }
          },
          "DependsOn":"RDSInstance"
       },
-      "NewVolume":{  
-         "Type":"AWS::EC2::Volume",
+      "WebServerGroup":{  
+         "Type":"AWS::AutoScaling::AutoScalingGroup",
          "Properties":{  
-            "Size":"20",
-            "VolumeType":"gp2",
-            "AvailabilityZone":"us-east-1a",
+            "AutoScalingGroupName":"csye6225ASG",
+            "Cooldown":"60",
+            "DesiredCapacity":"3",
+            "LaunchConfigurationName":{  
+               "Ref":"AutoScaledEc2Instance"
+            },
+            "TargetGroupARNs":[  
+               {  
+                  "Ref":"LoadBalancerTarget"
+               }
+            ],
+            "MaxSize":"10",
+            "MinSize":"3",
             "Tags":[  
                {  
                   "Key":"Name",
-                  "Value":"EC2AppVolume"
+                  "Value":"EC2Webapplication",
+                  "PropagateAtLaunch":"True"
+               }
+            ],
+            "VPCZoneIdentifier":[  
+               {  
+                  "Fn::ImportValue":"PublicSubnet1"
+               },
+               {  
+                  "Fn::ImportValue":"PublicSubnet2"
+               },
+               {  
+                  "Fn::ImportValue":"PublicSubnet3"
                }
             ]
          }
       },
-      "S3bucket":{  
-         "Type":"AWS::S3::Bucket",
+      "LoadBalancer":{  
+         "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
          "Properties":{  
-            "BucketName":{  
+            "Name":"csye6225LB",
+            "Scheme":"internet-facing",
+            "Subnets":[  
+               {  
+                  "Fn::ImportValue":"PublicSubnet1"
+               },
+               {  
+                  "Fn::ImportValue":"PublicSubnet2"
+               },
+               {  
+                  "Fn::ImportValue":"PublicSubnet3"
+               }
+            ],
+            "SecurityGroups":[  
+               {  
+                  "Ref":"SecurityGroupWB"
+               }
+            ],
+            "Type":"application",
+            "IpAddressType":"ipv4"
+         }
+      },
+      "LoadBalancerTarget":{  
+         "Type":"AWS::ElasticLoadBalancingV2::TargetGroup",
+         "Properties":{  
+            "HealthCheckIntervalSeconds":30,
+            "UnhealthyThresholdCount":10,
+            "HealthCheckPath":"/",
+            "TargetGroupAttributes":[  
+               {  
+                  "Key":"deregistration_delay.timeout_seconds",
+                  "Value":"20"
+               }
+            ],
+            "Name":"csye6225TG",
+            "HealthCheckPort":8080,
+            "TargetType":"instance",
+            "Port":8080,
+            "Protocol":"HTTP",
+            "VpcId":{  
+               "Fn::ImportValue":"CFVPCID"
+            }
+         }
+      },
+      "LoadBalancerListener":{  
+         "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "Properties":{  
+            "DefaultActions":[  
+               {  
+                  "Type":"forward",
+                  "TargetGroupArn":{  
+                     "Ref":"LoadBalancerTarget"
+                  }
+               }
+            ],
+            "LoadBalancerArn":{  
+               "Ref":"LoadBalancer"
+            },
+            "Port":"443",
+            "Protocol":"HTTPS",
+            "Certificates":[  
+               {  
+                  "CertificateArn":{  
+                     "Ref":"certARN"
+                  }
+               }
+            ]
+         }
+      },
+      "WebServerScaleUpPolicy":{  
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{  
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{  
+               "Ref":"WebServerGroup"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"1"
+         }
+      },
+      "WebServerScaleDownPolicy":{  
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{  
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{  
+               "Ref":"WebServerGroup"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"-1"
+         }
+      },
+      "CPUAlarmHigh":{  
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{  
+            "AlarmDescription":"Scale-up if CPU > 10% for 1 min",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"60",
+            "EvaluationPeriods":"2",
+            "Threshold":"10",
+            "AlarmActions":[  
+               {  
+                  "Ref":"WebServerScaleUpPolicy"
+               }
+            ],
+            "Dimensions":[  
+               {  
+                  "Name":"AutoScalingGroupName",
+                  "Value":{  
+                     "Ref":"WebServerGroup"
+                  }
+               }
+            ],
+            "ComparisonOperator":"GreaterThanThreshold"
+         }
+      },
+      "CPUAlarmLow":{  
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{  
+            "AlarmDescription":"Scale-down if CPU < 8% for 1 minutes",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"60",
+            "EvaluationPeriods":"2",
+            "Threshold":"8",
+            "AlarmActions":[  
+               {  
+                  "Ref":"WebServerScaleDownPolicy"
+               }
+            ],
+            "Dimensions":[  
+               {  
+                  "Name":"AutoScalingGroupName",
+                  "Value":{  
+                     "Ref":"WebServerGroup"
+                  }
+               }
+            ],
+            "ComparisonOperator":"LessThanThreshold"
+         }
+      },
+      "ResourceRecords":{  
+         "Type":"AWS::Route53::RecordSet",
+         "Properties":{  
+            "HostedZoneId":{  
+               "Ref":"hzid"
+            },
+            "Name":{  
                "Fn::Join":[  
                   "",
                   [  
                      {  
                         "Ref":"hostedzone"
                      },
-                     ".csye6225.com"
+                     "."
                   ]
                ]
-            }
+            },
+            "AliasTarget":{  
+               "HostedZoneId":{  
+                  "Fn::GetAtt":[  
+                     "LoadBalancer",
+                     "CanonicalHostedZoneID"
+                  ]
+               },
+               "DNSName":{  
+                  "Fn::GetAtt":[  
+                     "LoadBalancer",
+                     "DNSName"
+                  ]
+               }
+            },
+            "Type":"A"
          }
       },
-      "RDSInstance":{  
-         "Type":"AWS::RDS::DBInstance",
+      "CodeDeployApplication":{  
+         "Type":"AWS::CodeDeploy::Application",
          "Properties":{  
-            "DBName":{  
-               "Ref":"DBSCHEMA"
+            "ApplicationName":"CSYE6225CodeDeployApplication"
+         }
+      },
+      "CodeDeployServiceRole":{  
+         "Type":"AWS::IAM::Role",
+         "Properties":{  
+            "RoleName":"CodeDeployServiceRole",
+            "AssumeRolePolicyDocument":{  
+               "Version":"2012-10-17",
+               "Statement":[  
+                  {  
+                     "Effect":"Allow",
+                     "Principal":{  
+                        "Service":"codedeploy.amazonaws.com"
+                     },
+                     "Action":[  
+                        "sts:AssumeRole"
+                     ]
+                  }
+               ]
             },
-            "AllocatedStorage":"5",
-            "DBInstanceClass":"db.t2.medium",
-            "Engine":"mysql",
-            "EngineVersion":"5.6.37",
-            "MasterUsername":{  
-               "Ref":"DBUSERNAME"
+            "ManagedPolicyArns":[  
+               "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+            ],
+            "Path":"/"
+         }
+      },
+      "DeploymentGroup":{  
+         "Type":"AWS::CodeDeploy::DeploymentGroup",
+         "Properties":{  
+            "ApplicationName":{  
+               "Ref":"CodeDeployApplication"
             },
-            "MasterUserPassword":{  
-               "Ref":"DBPASSWORD"
-            },
-            "MultiAZ":"false",
-            "VPCSecurityGroups":[  
+            "AutoScalingGroups":[  
                {  
-                  "Ref":"SecurityGroupDB"
+                  "Ref":"WebServerGroup"
                }
             ],
-            "PubliclyAccessible":"false",
-            "DBInstanceIdentifier":"DBInstanceID",
-            "DBSubnetGroupName":{  
-               "Fn::ImportValue":"CFDBPrivateSubnets"
+            "DeploymentGroupName":"Codedeploy_groupname",
+            "DeploymentStyle":{  
+               "DeploymentType":"IN_PLACE",
+               "DeploymentOption":"WITHOUT_TRAFFIC_CONTROL"
             },
-            "Tags":[  
+            "Ec2TagFilters":[  
                {  
                   "Key":"Name",
-                  "Value":"MySQLDatabase"
+                  "Type":"KEY_AND_VALUE",
+                  "Value":"EC2Webapplication"
                }
-            ]
+            ],
+            "LoadBalancerInfo":{  
+               "TargetGroupInfoList":[  
+                  {  
+                     "Name":{  
+                        "Fn::GetAtt":[  
+                           "LoadBalancerTarget",
+                           "TargetGroupName"
+                        ]
+                     }
+                  }
+               ]
+            },
+            "ServiceRoleArn":{  
+               "Fn::GetAtt":[  
+                  "CodeDeployServiceRole",
+                  "Arn"
+               ]
+            }
          }
       }
    }

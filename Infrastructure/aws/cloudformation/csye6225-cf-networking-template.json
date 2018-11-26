@@ -477,6 +477,33 @@
          "Export":{  
             "Name":"CFDBPrivateSubnets"
          }
+      },
+      "PublicSubnet1":{  
+         "Description":"The ID of the VPC",
+         "Value":{  
+            "Ref":"PublicSubnet1"
+         },
+         "Export":{  
+            "Name":"PublicSubnet1"
+         }
+      },
+      "PublicSubnet2":{  
+         "Description":"The ID of the VPC",
+         "Value":{  
+            "Ref":"PublicSubnet2"
+         },
+         "Export":{  
+            "Name":"PublicSubnet2"
+         }
+      },
+      "PublicSubnet3":{  
+         "Description":"The ID of the VPC",
+         "Value":{  
+            "Ref":"PublicSubnet3"
+         },
+         "Export":{  
+            "Name":"PublicSubnet3"
+         }
       }
    }
 }

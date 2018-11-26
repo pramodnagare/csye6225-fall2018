@@ -139,30 +139,6 @@
             ]
          }
       },
-      "CodeDeployServiceRole":{  
-         "Type":"AWS::IAM::Role",
-         "Properties":{  
-            "RoleName":"CodeDeployServiceRole",
-            "AssumeRolePolicyDocument":{  
-               "Version":"2012-10-17",
-               "Statement":[  
-                  {  
-                     "Effect":"Allow",
-                     "Principal":{  
-                        "Service":"codedeploy.amazonaws.com"
-                     },
-                     "Action":[  
-                        "sts:AssumeRole"
-                     ]
-                  }
-               ]
-            },
-            "ManagedPolicyArns":[  
-               "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
-            ],
-            "Path":"/"
-         }
-      },
       "ec2role":{  
          "Type":"AWS::IAM::Role",
          "Properties":{  
@@ -250,38 +226,6 @@
             ]
          }
       },
-      "CodeDeployApplication":{  
-         "Type":"AWS::CodeDeploy::Application",
-         "Properties":{  
-            "ApplicationName":"CSYE6225CodeDeployApplication"
-         }
-      },
-      "DeploymentGroup":{  
-         "Type":"AWS::CodeDeploy::DeploymentGroup",
-         "Properties":{  
-            "ApplicationName":{  
-               "Ref":"CodeDeployApplication"
-            },
-            "DeploymentGroupName":"Codedeploy_groupname",
-            "DeploymentStyle":{  
-               "DeploymentType":"IN_PLACE",
-               "DeploymentOption":"WITHOUT_TRAFFIC_CONTROL"
-            },
-            "Ec2TagFilters":[  
-               {  
-                  "Key":"Name",
-                  "Type":"KEY_AND_VALUE",
-                  "Value":"EC2Webapplication"
-               }
-            ],
-            "ServiceRoleArn":{  
-               "Fn::GetAtt":[  
-                  "CodeDeployServiceRole",
-                  "Arn"
-               ]
-            }
-         }
-      },
       "EC2ToCloudWatchPolicy":{  
          "Type":"AWS::IAM::ManagedPolicy",
          "Properties":{  
@@ -293,7 +237,7 @@
                      "Effect":"Allow",
                      "Action":[  
                         "logs:*",
-			"cloudwatch:*"
+                        "cloudwatch:*"
                      ],
                      "Resource":[  
                         "*"

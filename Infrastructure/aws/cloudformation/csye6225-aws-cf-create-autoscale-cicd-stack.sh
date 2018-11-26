@@ -19,7 +19,7 @@ echo "AccountId: $accountid"
 export TravisUser=travis
 ##Creating Stack
 echo "Creating Stack $stackname"
-response=$(aws cloudformation create-stack --stack-name "$stackname" --template-body file://csye6225-cf-cicd-template.json --parameters ParameterKey=s3domainname,ParameterValue=$s3domainname ParameterKey=TravisUser,ParameterValue=$TravisUser ParameterKey=accountid,ParameterValue=$accountid --capabilities CAPABILITY_NAMED_IAM)
+response=$(aws cloudformation create-stack --stack-name "$stackname" --template-body file://csye6225-cf-autoscale-cicd-template.json --parameters ParameterKey=s3domainname,ParameterValue=$s3domainname ParameterKey=TravisUser,ParameterValue=$TravisUser ParameterKey=accountid,ParameterValue=$accountid --capabilities CAPABILITY_NAMED_IAM)
 
 
 if [ $? -eq 0 ]; then

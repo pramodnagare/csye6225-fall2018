@@ -20,6 +20,7 @@ import com.example.webapp.Model.Attachments;
 import com.example.webapp.Model.Transactions;
 import com.example.webapp.Model.User;
 import com.example.webapp.Repository.AttachmentRepository;
+import com.example.webapp.Repository.LogHelper;
 import com.example.webapp.Repository.TransactionsRepository;
 import com.example.webapp.Repository.UserRepository;
 import com.amazonaws.services.sns.*;
@@ -31,8 +32,9 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.*;
-//import java.util.Optional;
+import java.util.Optional;
 
+import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.mindrot.jbcrypt.BCrypt;
@@ -62,6 +64,10 @@ public class DevController {
 
     private String bucketName = "";
 
+    @Autowired
+    private StatsDClient statsDClient;
+    LogHelper logger = new LogHelper();
+
     public AWSCredentialsProviderChain getchain(){
         AWSCredentialsProviderChain chain  = new AWSCredentialsProviderChain(
                 InstanceProfileCredentialsProvider.getInstance(),new ProfileCredentialsProvider()
@@ -73,9 +79,13 @@ public class DevController {
 
 
     @GetMapping(value="/password_reset")
-    public ResponseEntity<?> getResetPassword(@RequestHeader(value="Authorization")String auth) throws UnknownHostException {
+    public ResponseEntity<?> getResetPassword(@RequestHeader(value="Authorization")String auth) throws Exception {
+        statsDClient.incrementCounter("endpoint.password_reset.api.get");
+        logger.logInfoEntry("password_reset get is started");
 
         if(auth.isEmpty()){
+
+            logger.logInfoEntry("wrong credentials of get method of password_reset ");
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
 
@@ -84,6 +94,8 @@ public class DevController {
         String []creds = devGetcreds(auth);
 
         if(creds.length == 0){
+            logger.logInfoEntry("Please login and then try of get method of password_reset ");
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
 
         }
@@ -91,6 +103,8 @@ public class DevController {
         String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
 
         if(!creds[0].matches(regex)) {
+
+            logger.logInfoEntry("wrong email id of get method of password_reset ");
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
 
@@ -130,18 +144,22 @@ public class DevController {
     }
     
     @GetMapping(value="/transaction")
-    public ResponseEntity<?> getTransaction(@RequestHeader(value="Authorization")String auth){
-    	
+    public ResponseEntity<?> getTransaction(@RequestHeader(value="Authorization")String auth) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.api.get");
+        logger.logInfoEntry("transaction get is started");
 
         if(auth.isEmpty()){
-        	
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
+            logger.logInfoEntry("transaction get where auth is wrong");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
         	
         }
 
         if(devGetTransactions(auth) == null){
-        	
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+
+            logger.logInfoEntry("transaction get where wrong user");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
         	
         }
 
@@ -150,16 +168,18 @@ public class DevController {
     }
 
     @PostMapping(value="/transaction")
-    public ResponseEntity<?> createTransaction(@RequestHeader(value="Authorization")String auth, @RequestBody Transactions t){
+    public ResponseEntity<?> createTransaction(@RequestHeader(value="Authorization")String auth, @RequestBody Transactions t) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.api.post");
+        logger.logInfoEntry("Post Transaction Started ");
 
         if(auth.isEmpty()){
-
+            logger.logInfoEntry("Authorization Issues of post method of Transaction ");
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
 
         }
 
         if(t == null){
-
+            logger.logInfoEntry("Transaction issues of post method of Transaction ");
         	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction body!");
 
         }
@@ -185,11 +205,16 @@ public class DevController {
     @PutMapping("/transaction/{id}")
     public ResponseEntity<?> updateTransaction(@RequestHeader(value="Authorization") String auth,
                                             @PathVariable(value="id")String id,
-                                            @RequestBody Transactions transaction){
+                                            @RequestBody Transactions transaction) throws Exception {
+
+
+        statsDClient.incrementCounter("endpoint.transaction.id.api.put");
+        logger.logInfoEntry(" put method of transaction is started");
 
         if(id == null){
-        	
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction ID for the request!");
+            logger.logInfoEntry(" put method of transaction where id is null");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction ID for the request!");
         }
 
         if(devUpdateTransaction(auth,id,transaction) != null){
@@ -202,9 +227,11 @@ public class DevController {
 
     @DeleteMapping("/transaction/{id}")
     public ResponseEntity<?> deleteTransaction(@RequestHeader(value="Authorization") String auth,
-                                            @PathVariable(value="id")String id){
-
+                                            @PathVariable(value="id")String id) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.id.api.delete");
+        logger.logInfoEntry("delete method of transaction has started");
         if(id == null){
+            logger.logInfoEntry("id of delete transaction is null");
         	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction ID for the request!");
         	
         }
@@ -217,6 +244,7 @@ public class DevController {
                 Transactions t = transactionsRepository.findUserTransactionById(id,u.get());
                 List<Attachments> ats = devGetAllAttachments(auth, t.getId());
                 if(ats!=null) {
+                    logger.logInfoEntry("list is null");
                 	for (Attachments a : ats) {
                 		devDeleteAttachment(auth, t.getId(), a.getId());
                 	}
@@ -239,10 +267,12 @@ public class DevController {
     
 
     @GetMapping("/time")
-    public ResponseEntity<?> authAndLogin(@RequestHeader(value="Authorization")String auth){
+    public ResponseEntity<?> authAndLogin(@RequestHeader(value="Authorization")String auth) throws Exception {
 
+        statsDClient.incrementCounter("endpoint.time.api.get");
+        logger.logInfoEntry("Get method of time has started");
         if(auth.isEmpty()){
-        	
+            logger.logInfoEntry("Get method of time where authorization failed");
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and try again");
         	
         }
@@ -252,10 +282,11 @@ public class DevController {
     }
 
     @PostMapping("/user/register")
-    public ResponseEntity<?> register(@RequestHeader(value="Authorization")String auth){
-
+    public ResponseEntity<?> register(@RequestHeader(value="Authorization")String auth) throws Exception {
+        statsDClient.incrementCounter("endpoint.user.register.api.post");
+        logger.logInfoEntry("Post method of user registration has started");
         if(auth.isEmpty()){
-        	
+            logger.logInfoEntry("Post method of user registration where authorization failed");
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Kindly provide credentials! Try again!");
         	
         }
@@ -266,12 +297,14 @@ public class DevController {
 
     @GetMapping("/transaction/{id}/attachments")
     public ResponseEntity<?> getAllAttachments(@RequestHeader(value="Authorization")String Auth,
-                                            @PathVariable(value = "id")String id){
-
+                                            @PathVariable(value = "id")String id) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.id.attachments.api.get");
+        logger.logInfoEntry("Get Method of Attachments strated");
         if(!Auth.isEmpty() && !id.isEmpty()){
             List<Attachments> attachmentsList = devGetAllAttachments(Auth,id);
 
             if(attachmentsList != null)
+                logger.logInfoEntry("Attachment list is  not empty");
             	return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(attachmentsList);
 
         }
@@ -283,7 +316,10 @@ public class DevController {
     @DeleteMapping("/transaction/{id}/attachments/{idAttachment}")
     public ResponseEntity<?> deleteAttachment(@RequestHeader(value="Authorization")String auth,
                                            @PathVariable(value="id")String id,
-                                           @PathVariable(value="idAttachment")String idAttachment){
+                                           @PathVariable(value="idAttachment")String idAttachment) throws Exception {
+
+        statsDClient.incrementCounter("endpoint.transaction.id.attachments.idAttachment.api.delete");
+        logger.logInfoEntry("Inside delete of Attachments Bad request");
 
         if(!auth.isEmpty() && !id.isEmpty() && !idAttachment.isEmpty()){
             if(devDeleteAttachment(auth,id,idAttachment)){
@@ -299,7 +335,9 @@ public class DevController {
     @PostMapping("/transaction/{id}/attachments")
     public ResponseEntity<?> addAttachment(@RequestHeader(value="Authorization")String auth,
                                         @PathVariable(value="id")String id,
-                                        @RequestParam("file")MultipartFile attachments){
+                                        @RequestParam("file")MultipartFile attachments) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.id.attachments.api.post");
+        logger.logInfoEntry("Post method of Attachmnets has started");
 
         if(!auth.isEmpty() && !id.isEmpty()){
         	
@@ -315,7 +353,9 @@ public class DevController {
     public ResponseEntity<?> updateTransaction(@RequestHeader(value="Authorization",defaultValue = "NoAuth")String auth,
                                             @PathVariable(value="id")String id,
                                             @PathVariable(value="idAttachment")String idAttachment,
-                                            @RequestParam("file") MultipartFile attachment){
+                                            @RequestParam("file") MultipartFile attachment) throws Exception {
+        statsDClient.incrementCounter("endpoint.transaction.id.attachments.idAttachment.api.put");
+        logger.logInfoEntry(" put of attachments is started");
 
         if(!auth.isEmpty() && !id.isEmpty() && attachment != null && !idAttachment.isEmpty()){
             return devUpdateAttachment(auth,id,attachment,idAttachment);

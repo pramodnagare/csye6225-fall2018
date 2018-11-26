@@ -14,8 +14,7 @@
       },
       "S3Bucket":{  
          "Description":"The name of the bucket that contains your packaged source",
-         "Type":"String",
-         "Default":"code-deploy.csye6225-fall2018-nagarep.me"
+         "Type":"String"
       },
       "S3Key":{  
          "Description":"The name of the ZIP package",
