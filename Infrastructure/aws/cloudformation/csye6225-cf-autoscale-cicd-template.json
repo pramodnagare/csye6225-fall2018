@@ -186,23 +186,11 @@
                "Statement":[  
                   {  
                      "Action":[  
-                        "s3:Get*",
-                        "s3:Put*",
-                        "s3:Delete*",
-                        "s3:List*"
+                        "s3:*"
                      ],
                      "Effect":"Allow",
                      "Resource":{  
-                        "Fn::Join":[  
-                           "",
-                           [  
-                              "arn:aws:s3:::",
-                              {  
-                                 "Ref":"s3domainname"
-                              },
-                              "/*"
-                           ]
-                        ]
+                        "*"
                      }
                   }
                ]
