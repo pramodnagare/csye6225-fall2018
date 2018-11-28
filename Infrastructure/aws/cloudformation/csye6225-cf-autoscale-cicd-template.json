@@ -192,9 +192,7 @@
                         "s3:List*"
                      ],
                      "Effect":"Allow",
-                     "Resource":{  
-                        "*"
-                     }
+                     "Resource":"*"
                   }
                ]
             },
