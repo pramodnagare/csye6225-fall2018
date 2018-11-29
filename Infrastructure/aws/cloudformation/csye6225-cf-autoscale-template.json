@@ -448,6 +448,29 @@
             "IpAddressType":"ipv4"
          }
       },
+      "ListenerRedirect":{  
+         "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "Properties":{  
+            "DefaultActions":[  
+               {  
+                  "Type":"redirect",
+                  "RedirectConfig":{  
+                     "Protocol":"HTTPS",
+                     "Host":"#{host}",
+                     "Query":"#{query}",
+                     "Path":"/#{path}",
+                     "Port":"443",
+                     "StatusCode":"HTTP_301"
+                  }
+               }
+            ],
+            "LoadBalancerArn":{  
+               "Ref":"LoadBalancer"
+            },
+            "Port":80,
+            "Protocol":"HTTP"
+         }
+      },
       "LoadBalancerTarget":{  
          "Type":"AWS::ElasticLoadBalancingV2::TargetGroup",
          "Properties":{  
