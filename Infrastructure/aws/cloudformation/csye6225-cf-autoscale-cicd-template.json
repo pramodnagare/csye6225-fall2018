@@ -192,18 +192,7 @@
                         "s3:List*"
                      ],
                      "Effect":"Allow",
-                     "Resource":{  
-                        "Fn::Join":[  
-                           "",
-                           [  
-                              "arn:aws:s3:::",
-                              {  
-                                 "Ref":"s3domainname"
-                              },
-                              "/*"
-                           ]
-                        ]
-                     }
+                     "Resource":"*"
                   }
                ]
             },
