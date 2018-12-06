@@ -2,22 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68820ea8-73da-4fb5-9973-5598cfd5f7f0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/DevController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/DevController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/LocalController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/LocalController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Main_WebApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Main_WebApp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Attachments.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Attachments.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Transactions.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Transactions.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/User.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/AttachmentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/AttachmentRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/LogHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/LogHelper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/MetricsHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/MetricsHelper.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/TransactionsRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/TransactionsRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/UserRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -136,12 +120,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="478" />
+          <entry key="java" value="828" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="478" />
+          <entry key="JAVA" value="828" />
         </counts>
       </usages-collector>
     </session>
@@ -151,8 +135,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
+            <state relative-caret-position="17">
+              <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -591,7 +578,7 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
@@ -601,41 +588,6 @@
             <path>
               <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
               <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="webapp" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="webapp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Webapplication" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="webapp" type="462c0819:PsiDirectoryNode" />
-              <item name="Repository" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -648,56 +600,6 @@
             <path>
               <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
               <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="Controller" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
           </expand>
           <select />
@@ -713,7 +615,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544078074256" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544078933062" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -756,12 +658,12 @@
       <workItem from="1542522430693" duration="1861000" />
       <workItem from="1542570428641" duration="18020000" />
       <workItem from="1542688513788" duration="2750000" />
-      <workItem from="1544076243212" duration="1795000" />
+      <workItem from="1544076243212" duration="2651000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="26272000" />
+    <option name="totallyTimeSpent" value="27128000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -790,7 +692,7 @@
       <window_info anchor="bottom" id="Spring" order="12" />
       <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="14" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="15" visible="true" weight="0.101639345" />
+      <window_info anchor="bottom" id="Messages" order="15" weight="0.101639345" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -857,8 +759,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
+        <state relative-caret-position="17">
+          <caret line="40" column="28" lean-forward="true" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

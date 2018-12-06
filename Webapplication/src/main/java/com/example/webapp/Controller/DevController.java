@@ -79,17 +79,17 @@ public class DevController {
             if (creds.length == 0) {
                 logger.logInfoEntry("Please login and then try of get method of password_reset ");
 
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"You are not logged in! Please login and then try!\"}");
 
             }
 
-            String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
+            String regex = "[.0-9A-Za-z]+@[.0-9A-Za-z]+\\.[A-Za-z]{2,}";
 
             if (!creds[0].matches(regex)) {
 
                 logger.logInfoEntry("wrong email id of get method of password_reset ");
 
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Email format is invalid! Please try again!\"}");
 
             }
 
@@ -113,20 +113,20 @@ public class DevController {
                     System.out.println(topicARN);
                     sns.publish(topicARN, msg);
 
-                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Response: Email for password reset has been sent!");
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Email for password reset has been sent!\"}");
 
                 }
             } catch (NoSuchElementException e) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"No such account in the system! Please register!\"}");
 
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"No such account in the system! Please register!\"}");
         } else {
 
             logger.logInfoEntry("wrong credentials of get method of password_reset ");
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Credentials are not valid\"}");
 
         }
 
@@ -141,7 +141,7 @@ public class DevController {
         if(auth.isEmpty()){
             logger.logInfoEntry("transaction get where auth is wrong");
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Credentials are not valid\"}");
         	
         }
 
@@ -149,7 +149,7 @@ public class DevController {
 
             logger.logInfoEntry("transaction get where wrong user");
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         	
         }
 
@@ -164,13 +164,13 @@ public class DevController {
 
         if(auth.isEmpty()){
             logger.logInfoEntry("Authorization Issues of post method of Transaction ");
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
 
         }
 
         if(t == null){
             logger.logInfoEntry("Transaction issues of post method of Transaction ");
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction body!");
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Kindly provide transaction body!\"}");
 
         }
 
@@ -187,7 +187,7 @@ public class DevController {
         }
 
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
 
     }
     
@@ -204,7 +204,7 @@ public class DevController {
         if(id == null){
             logger.logInfoEntry(" put method of transaction where id is null");
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction ID for the request!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Kindly provide transaction ID for the request!\"}");
         }
 
         if(devUpdateTransaction(auth,id,transaction) != null){
@@ -212,7 +212,7 @@ public class DevController {
         	return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(devUpdateTransaction(auth,id,transaction));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
     }
 
     @DeleteMapping("/transaction/{id}")
@@ -222,7 +222,7 @@ public class DevController {
         logger.logInfoEntry("delete method of transaction has started");
         if(id == null){
             logger.logInfoEntry("id of delete transaction is null");
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Kindly provide transaction ID for the request!");
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Kindly provide transaction ID for the request!\"}");
         	
         }
 
@@ -243,15 +243,15 @@ public class DevController {
                 User user = userRepository.getOne(creds[0]);
                 user.deleteTransaction(t);
                 transactionsRepository.delete(t);
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Your Transaction deleted successfully!");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Your Transaction deleted successfully!\"}");
             }catch (Exception e){
                 System.out.print(e.getMessage());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! Something went wrong! Please try again!");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! Something went wrong! Please try again!\"}");
             }
 
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
     
