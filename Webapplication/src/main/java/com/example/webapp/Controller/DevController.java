@@ -631,7 +631,7 @@ public class DevController {
             	
                 Date date = new Date();
                 
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Time: "+date.toString());
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\": \"" + date.toString()+ "\"}");
                 
             }
         }catch(NoSuchElementException e){
