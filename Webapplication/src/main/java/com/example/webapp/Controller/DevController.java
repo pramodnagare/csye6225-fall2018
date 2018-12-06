@@ -679,7 +679,7 @@ public class DevController {
             catch(Exception e){
                 System.out.print(e.getMessage());
                 devCreateUser(auth);
-                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"User Account has been successfully created!\"}");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"User Account has been successfully created!\"}");
                 
             }
         }
