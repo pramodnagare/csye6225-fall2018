@@ -4,7 +4,7 @@ Team Memmbers:
 
 Pramod Nagare
 
-Pallavi Patel
+Pallavi R Patel
 
 Harsh Shah
 
