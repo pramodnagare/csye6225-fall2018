@@ -3,19 +3,13 @@ import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
-import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
-import com.amazonaws.services.ec2.model.DescribeInstancesResult;
-import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.util.EC2MetadataUtils;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.example.webapp.Model.Attachments;
 import com.example.webapp.Model.Transactions;
 import com.example.webapp.Model.User;
@@ -23,17 +17,6 @@ import com.example.webapp.Repository.AttachmentRepository;
 import com.example.webapp.Repository.LogHelper;
 import com.example.webapp.Repository.TransactionsRepository;
 import com.example.webapp.Repository.UserRepository;
-import com.amazonaws.services.sns.*;
-
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.*;
-import java.util.Optional;
-
 import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -45,6 +28,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.InetAddress;
+import java.net.URL;
+import java.util.*;
 
 
 @RestController
@@ -83,62 +72,63 @@ public class DevController {
         statsDClient.incrementCounter("endpoint.password_reset.api.get");
         logger.logInfoEntry("password_reset get is started");
 
-        if(auth.isEmpty()){
+        if (!auth.isEmpty()) {
+
+            String[] creds = devGetcreds(auth);
+
+            if (creds.length == 0) {
+                logger.logInfoEntry("Please login and then try of get method of password_reset ");
+
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
+
+            }
+
+            String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
+
+            if (!creds[0].matches(regex)) {
+
+                logger.logInfoEntry("wrong email id of get method of password_reset ");
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
+
+            }
+
+
+            try {
+                if (devAuthUser(creds)) {
+
+                    AmazonSNS sns = AmazonSNSClientBuilder.standard().withCredentials(getchain()).build();
+
+                    String userName = creds[0];
+                    String table = System.getProperty("dynamoDB");
+                    System.out.println("DynamoDB table:" + table);
+                    InetAddress myHost = InetAddress.getLocalHost();
+                    String ec2 = myHost.getHostAddress();
+                    System.out.println("ec2:" + ec2);
+                    String emailHost = System.getProperty("emailHost");
+                    System.out.println("emailHost:" + emailHost);
+                    String msg = userName + "|" + emailHost + "|" + table + "|" + ec2;
+                    System.out.println("msg:" + msg);
+                    String topicARN = System.getProperty("topicARN");
+                    System.out.println(topicARN);
+                    sns.publish(topicARN, msg);
+
+                    return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Response: Email for password reset has been sent!");
+
+                }
+            } catch (NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+        } else {
 
             logger.logInfoEntry("wrong credentials of get method of password_reset ");
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Credentials are not valid");
 
         }
-
-        String []creds = devGetcreds(auth);
-
-        if(creds.length == 0){
-            logger.logInfoEntry("Please login and then try of get method of password_reset ");
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
-
-        }
-
-        String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
-
-        if(!creds[0].matches(regex)) {
-
-            logger.logInfoEntry("wrong email id of get method of password_reset ");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
-
-        }
-
-
-        try {
-            if(devAuthUser(creds)){
-
-                AmazonSNS sns = AmazonSNSClientBuilder.standard().withCredentials(getchain()).build();
-
-                String userName = creds[0];
-                String table = System.getProperty("dynamoDB");
-                System.out.println("DynamoDB table:"+ table);
-                InetAddress myHost = InetAddress.getLocalHost();
-                String ec2= myHost.getHostAddress();
-                System.out.println("ec2:"+ec2);
-                String emailHost = System.getProperty("emailHost");
-                System.out.println("emailHost:"+emailHost);
-                String msg = userName+"|"+emailHost+"|"+table+"|"+ec2;
-                System.out.println("msg:"+msg);
-                String topicARN = System.getProperty("topicARN");
-                System.out.println(topicARN);
-                sns.publish(topicARN,msg);
-
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("Response: Email for password reset has been sent!");
-
-            }
-        }catch(NoSuchElementException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
-
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
 
 
     }
@@ -273,7 +263,7 @@ public class DevController {
         logger.logInfoEntry("Get method of time has started");
         if(auth.isEmpty()){
             logger.logInfoEntry("Get method of time where authorization failed");
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and try again");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"You are not logged in! Please Login and Try again!\"}");
         	
         }
 
@@ -287,7 +277,7 @@ public class DevController {
         logger.logInfoEntry("Post method of user registration has started");
         if(auth.isEmpty()){
             logger.logInfoEntry("Post method of user registration where authorization failed");
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Kindly provide credentials! Try again!");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Kindly provide credentials! Try again!\"}");
         	
         }
 
@@ -309,7 +299,7 @@ public class DevController {
 
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
 
@@ -323,12 +313,12 @@ public class DevController {
 
         if(!auth.isEmpty() && !id.isEmpty() && !idAttachment.isEmpty()){
             if(devDeleteAttachment(auth,id,idAttachment)){
-            	return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("The requested attachment has been deleted successfully!");
+            	return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"The requested attachment has been deleted successfully!\"}");
             	
             }
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
 
@@ -344,7 +334,7 @@ public class DevController {
             return devAddAttachment(auth,id,attachments);
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
 
@@ -361,7 +351,7 @@ public class DevController {
             return devUpdateAttachment(auth,id,attachment,idAttachment);
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
     
@@ -402,7 +392,7 @@ public class DevController {
                 extension.toLowerCase();
                 if (!extension.equalsIgnoreCase("jpeg") && !extension.equalsIgnoreCase("jpg") && !extension.equalsIgnoreCase("png")) {
                     System.out.print(extension);
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Attachment only supported for jpeg, jpg or png file extensions! Please try again!");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Attachment only supported for jpeg, jpg or png file extensions! Please try again!\"}");
                     
                 }
 
@@ -415,7 +405,7 @@ public class DevController {
                 String newPath = devUploadToS3(multiPartFile, file.getName(),user.getEmail());
 
                 if (newPath == null) {
-                	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("This request for upload to s3 has been failed! Please try again!");
+                	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"This request for upload to s3 has been failed! Please try again!\"}");
                 	
                 }
 
@@ -435,7 +425,7 @@ public class DevController {
             e.printStackTrace();
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
 
@@ -461,7 +451,7 @@ public class DevController {
                     extension.toLowerCase();
                     if (!extension.equalsIgnoreCase("jpeg") && !extension.equalsIgnoreCase("jpg") && !extension.equalsIgnoreCase("png")) {
                         System.out.print(extension);
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Enter file with jpeg, jpg or png extension only! Try again!");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Enter file with jpeg, jpg or png extension only! Try again!\"}");
                         
                     }
 
@@ -488,7 +478,7 @@ public class DevController {
             e.printStackTrace();
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Oops! You are not authorized to perform this operation!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Oops! You are not authorized to perform this operation!\"}");
         
     }
 
@@ -623,15 +613,15 @@ public class DevController {
         String []creds = devGetcreds(auth);
 
         if(creds.length == 0){
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("You are not logged in! Please login and then try!");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"You are not logged in! Please login and then try!\"}");
         	
         }
 
-        String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
+        String regex = "[.0-9A-Za-z]+@[.0-9A-Za-z]+\\.[A-Za-z]{2,}";
         
         if(!creds[0].matches(regex)) {
         	
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("email format is invalid! Please try again!");
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Email format is invalid! Please try again!\"}");
         	
         }
         
@@ -645,11 +635,11 @@ public class DevController {
                 
             }
         }catch(NoSuchElementException e){
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"No such account in the system! Please register!\"}");
         	
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("No such account in the system! Please register!");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"No such account in the system! Please register!\"}");
         
     }
 
@@ -657,19 +647,19 @@ public class DevController {
         String []creds = devGetcreds(auth);
 
         if(creds.length == 0){
-        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("Username or Password cannot be blank! Please Try again!");
+        	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Username or Password cannot be blank! Please Try again!\"}");
         	
         }
         
-        String regex = "[0-9A-Za-z]+@[0-9A-Za-z]+\\.[A-Za-z]{2,}";
+        String regex = "[.0-9A-Za-z]+@[.0-9A-Za-z]+\\.[A-Za-z]{2,}";
         if(!creds[0].matches(regex)) {
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("Username has to be valid email-ID! Please try again!");
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Username has to be valid email-ID! Please try again!\"}");
         	
         }
 
 
         if(devAuthUserEmail(creds)){
-        	return ResponseEntity.status(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON).body("This account already exists in the system!");
+        	return ResponseEntity.status(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"This account already exists in the system!\"}");
         	
         }else{
             try {
@@ -683,12 +673,12 @@ public class DevController {
 
                 userRepository.save(user);
 
-                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("User Account has been successfully created!");
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"User Account has been successfully created!\"}");
                 
             }
             catch(Exception e){
                 System.out.print(e.getMessage());
-                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).contentType(MediaType.APPLICATION_JSON).body("Error while crearting user account!");
+                return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Error while creating user account! Please Try again!\"}");
                 
             }
         }

@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68820ea8-73da-4fb5-9973-5598cfd5f7f0" name="Default Changelist" comment="" />
+    <list default="true" id="68820ea8-73da-4fb5-9973-5598cfd5f7f0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.3.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/DevController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/DevController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/LocalController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/LocalController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Main_WebApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Main_WebApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Attachments.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Attachments.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Transactions.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/Transactions.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/AttachmentRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/AttachmentRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/LogHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/LogHelper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/MetricsHelper.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/MetricsHelper.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/TransactionsRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/TransactionsRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/UserRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/com/example/webapp/Repository/UserRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -97,17 +115,44 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="-1154606334">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.31" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="java" value="2" />
+          <entry key="properties" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="JAVA" value="2" />
+          <entry key="Properties" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="java" value="478" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="478" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7673">
-              <caret line="339" column="70" lean-forward="true" selection-start-line="338" selection-start-column="8" selection-end-line="339" selection-end-column="70" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="306">
+              <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -133,7 +178,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\harsh\.gradle\wrapper\dists\gradle-4.3.1-all\97nfwr7im082t7xwc6bkwfrg9\gradle-4.3.1" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\pramo\.gradle\wrapper\dists\gradle-4.3.1-all\97nfwr7im082t7xwc6bkwfrg9\gradle-4.3.1" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -318,7 +363,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="6170719889853" />
+        <entry key="$PROJECT_DIR$" value="6173893411891" />
         <entry key="$PROJECT_DIR$/.gradle" value="0" />
         <entry key="$PROJECT_DIR$/build.gradle" value="246570643" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="1491888232" />
@@ -496,8 +541,8 @@
     </option>
     <option name="projectSyncType">
       <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
         <entry key="$USER_HOME$/Downloads/clddata-077b939a37e0d39985d5505fc6b47b3dbc31091e/Webapplication" value="PREVIEW" />
+        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
       </map>
     </option>
   </component>
@@ -518,7 +563,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="10" />
     <option name="y" value="20" />
     <option name="width" value="1346" />
@@ -546,11 +591,10 @@
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -597,7 +641,68 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="AndroidView" />
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="webapp_main" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="com" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="example" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="webapp" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="Controller" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="webapp" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="webapp" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -608,7 +713,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1542690878830" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544078074256" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -651,24 +756,24 @@
       <workItem from="1542522430693" duration="1861000" />
       <workItem from="1542570428641" duration="18020000" />
       <workItem from="1542688513788" duration="2750000" />
+      <workItem from="1544076243212" duration="1795000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24477000" />
+    <option name="totallyTimeSpent" value="26272000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23600605" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23298033" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info id="Capture Tool" order="6" />
-      <window_info id="Learn" order="7" />
+      <window_info id="Learn" order="7" weight="0.32980332" />
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -685,7 +790,7 @@
       <window_info anchor="bottom" id="Spring" order="12" />
       <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="14" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Messages" order="15" weight="0.101639345" />
+      <window_info anchor="bottom" id="Messages" order="15" visible="true" weight="0.101639345" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -707,13 +812,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/out/production/classes/com/example/webapp/Controller/DevController.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -726,9 +824,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19">
           <caret line="18" column="15" lean-forward="true" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -736,9 +831,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="459">
           <caret line="27" column="27" lean-forward="true" selection-start-line="27" selection-start-column="27" selection-end-line="27" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -749,13 +841,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/LocalController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/example/webapp/Controller/DevController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7673">
-          <caret line="339" column="70" lean-forward="true" selection-start-line="338" selection-start-column="8" selection-end-line="339" selection-end-column="70" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="306">
+          <caret line="18" column="52" lean-forward="true" selection-start-line="18" selection-start-column="52" selection-end-line="18" selection-end-column="52" />
         </state>
       </provider>
     </entry>
