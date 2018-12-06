@@ -30,4 +30,4 @@ The above script will create stack from template csye6225_cf_networking_template
 
 Deleting stack: ./csye6225_aws_cf_terminate_stack.sh
 
-The above script will delete the stack mentioned in the argument.
+The above script will delete the stack mentioned in the argument..
