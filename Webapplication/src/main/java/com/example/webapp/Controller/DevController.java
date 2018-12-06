@@ -367,8 +367,10 @@ public class DevController {
             if (devAuthUser(creds)) {
 
                 Transactions transactions = transactionsRepository.findUserTransactionById(id, user);
-
-                return transactions.getAttachmentsList();
+                if (transactions!=null)
+                    return transactions.getAttachmentsList();
+                else
+                    return null;
             }
         } catch (Exception e) {
         }
@@ -387,26 +389,28 @@ public class DevController {
 
                 Transactions transaction = transactionsRepository.findUserTransactionById(id, user);
 
+                if(transaction != null){
+
                 File file = new File(multiPartFile.getOriginalFilename());
                 String extension = FilenameUtils.getExtension(file.getName());
                 extension.toLowerCase();
                 if (!extension.equalsIgnoreCase("jpeg") && !extension.equalsIgnoreCase("jpg") && !extension.equalsIgnoreCase("png")) {
                     System.out.print(extension);
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"Attachment only supported for jpeg, jpg or png file extensions! Please try again!\"}");
-                    
+
                 }
 
                 file.setWritable(true);
-                FileOutputStream fos = new FileOutputStream("/opt/tomcat/uploads/"+file);
+                FileOutputStream fos = new FileOutputStream("/opt/tomcat/uploads/" + file);
                 fos.write(multiPartFile.getBytes());
                 fos.close();
 
 
-                String newPath = devUploadToS3(multiPartFile, file.getName(),user.getEmail());
+                String newPath = devUploadToS3(multiPartFile, file.getName(), user.getEmail());
 
                 if (newPath == null) {
-                	return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"This request for upload to s3 has been failed! Please try again!\"}");
-                	
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body("{\"Response\":\"This request for upload to s3 has been failed! Please try again!\"}");
+
                 }
 
                 Attachments newAttachment = new Attachments();
@@ -419,6 +423,7 @@ public class DevController {
                     transactionsRepository.save(transaction);
                     return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(newAttachment);
                 }
+            }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
